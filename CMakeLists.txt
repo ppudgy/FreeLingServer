@@ -20,7 +20,8 @@ add_definitions(-std=c++14 -fpermissive) # For old cmake versions
 ###include_directories(include)
 
 set(SOURCE_FILES 
-    src/main.cpp)
+    src/main.cpp
+    )
 
 add_executable(freelingserver ${SOURCE_FILES})
 target_link_libraries(freelingserver microhttpd pthread)
