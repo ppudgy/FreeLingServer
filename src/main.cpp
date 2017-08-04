@@ -44,7 +44,11 @@ using namespace iod;
  */
 
 auto hello_api = http_api(
-    POST / _freeling * get_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp,  auto p) {
+    POST / _freeling * post_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp,  auto p) {
+        // получить строку для анализа
+        // проанализировать строку
+        //
+        // 
     }
     GET / _freeling * get_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp,  auto p) {
         const char* ac_lang = req->get_header("Accept-Language");
@@ -52,24 +56,37 @@ auto hello_api = http_api(
         std::string result = "freeling " + p.text;
         return result;
     },
-        const char* ac_lang = req->get_header("Accept-Language");
-        const char* ac_acc = req->get_header("Accept");
-        std::string result = "freeling " + p.text;
-        return result;
+    GET /   _cfg = [](){
+        // если HTML - вернуть форму с конфигурацией и возможностью ее редактироать
+        // если json, xml - вернуть данные
     },
-        const char* ac_lang = req->get_header("Accept-Language");
-        const char* ac_acc = req->get_header("Accept");
-        std::string result = "freeling " + p.text;
-        return result;
-    },
-        const char* ac_lang = req->get_header("Accept-Language");
-        const char* ac_acc = req->get_header("Accept");
-        std::string result = "freeling " + p.text;
-        return result;
-    },
+    POST / _cfg = [](mhd_request* req, mhd_response* resp){
+        // если json, xml - установить конфигурацию и вернуть новую конфигурацию
+        // если параметры формы - установить конфигурацию и вернуть форму с кофигурацией и возможностью ее редактировать
+    }
+    GET = [] () {
+        // получить информацию о программе
+        //  name:string
+        //  major:string
+        //  minor:string
+        //  uptime: int; // in second
+        //
+        // создать структуру ответа
+        
+        // если запрашиваемый формат HTML, сформировать и вернуть
+        // если запрашиваемый формат XML, сформировать и вернуть
+        // 
 
-    GET = [] ()
-    {
+        const char* ac_acc = req->get_header("Accept");
+
+        if(sting_utils::contain(ac_acc, "text/html")){
+
+        }else if(sting_utils::contain(ac_acc, "text/xml")){
+
+        }else if(sting_utils::contain(ac_acc, "application/json")){
+            
+        }
+
         return "about";
     }
 
