@@ -21,17 +21,16 @@
 #include <silicon/backends/mhd.hh>
 
 
-iod_define_symbol(port);
-iod_define_symbol(nodaemon);
-iod_define_symbol(help);
-
-iod_define_symbol(text);
-iod_define_symbol(freeling);
+#include "analyzer.h"
+#include "symbols.hh"
+#include "string_util.h"
 
 
 using namespace s;
 using namespace sl;
 using namespace iod;
+
+
 
 
 
@@ -44,16 +43,27 @@ using namespace iod;
  */
 
 auto hello_api = http_api(
-    POST / _freeling * post_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp,  auto p) {
+    POST / _freeling * post_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp, freeling_analyzer::analyzer_pool& pool, auto p) {
         // получить строку для анализа
+        std::string al = req->get_header("Accept-Language");
+        std::string lang = string_util::parse_http_accept_lang(al);
+
+        freeling_analyzer::analyzer_proxy proxy(pool, lang);
+        
+
+
+
+
         // проанализировать строку
         //
         // 
-    }
-    GET / _freeling * get_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp,  auto p) {
+        std::string result = "freeling POST : " + p.text;
+        return result;
+    },
+    GET / _freeling * get_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp, freeling_analyzer::analyzer_pool& a, auto p) {
         const char* ac_lang = req->get_header("Accept-Language");
         const char* ac_acc = req->get_header("Accept");
-        std::string result = "freeling " + p.text;
+        std::string result = "freeling GET: " + p.text;
         return result;
     },
     GET /   _cfg = [](){
@@ -63,8 +73,8 @@ auto hello_api = http_api(
     POST / _cfg = [](mhd_request* req, mhd_response* resp){
         // если json, xml - установить конфигурацию и вернуть новую конфигурацию
         // если параметры формы - установить конфигурацию и вернуть форму с кофигурацией и возможностью ее редактировать
-    }
-    GET = [] () {
+    },
+    GET = [] (mhd_request* req, mhd_response* resp) {
         // получить информацию о программе
         //  name:string
         //  major:string
@@ -79,13 +89,13 @@ auto hello_api = http_api(
 
         const char* ac_acc = req->get_header("Accept");
 
-        if(sting_utils::contain(ac_acc, "text/html")){
+//        if(sting_utils::contain(ac_acc, "text/html")){
 
-        }else if(sting_utils::contain(ac_acc, "text/xml")){
+//        }else if(sting_utils::contain(ac_acc, "text/xml")){
 
-        }else if(sting_utils::contain(ac_acc, "application/json")){
+//        }else if(sting_utils::contain(ac_acc, "application/json")){
             
-        }
+//        }
 
         return "about";
     }
@@ -106,7 +116,7 @@ int main(const int argc, const char* argv[])
 
 
     int port = opts.port;
-    auto ctx = sl::mhd_json_serve(hello_api, port);
+    auto ctx = sl::mhd_json_serve(hello_api, middleware_factories(freeling_analyzer::analyzer_factory()),port);
 
     return 0;
 }
