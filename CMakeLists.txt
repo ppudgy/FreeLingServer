@@ -21,6 +21,11 @@ add_definitions(-std=c++14 -fpermissive) # For old cmake versions
 
 set(SOURCE_FILES 
     src/main.cpp
+    src/symbols.hh
+    src/string_util.cpp
+    src/string_util.h
+    src/analyzer.cpp
+    src/analyzer.h
     )
 
 add_executable(freelingserver ${SOURCE_FILES})
