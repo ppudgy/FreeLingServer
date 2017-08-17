@@ -11,6 +11,9 @@ namespace freeling_analyzer{
 
 
 class analyzer{
+	
+public:	
+		std::string analyze(const std::string& text);
 
 };
 
@@ -38,8 +41,8 @@ struct analyzer_proxy{
 		_pool.store(_analyzer);
 	}
 
-	analyzer& operator->(){
-		return *_analyzer;
+	analyzer* operator->(){
+		return _analyzer;
 	}	
 
 
