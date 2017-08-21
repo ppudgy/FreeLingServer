@@ -1,8 +1,12 @@
 #ifndef FLS_ANALYZER_H
 #define FLS_ANALYZER_H
 
-
 #include <string>
+#include <list>
+#include <mutex>
+
+#include <freeling/morfo/analyzer.h>
+
 
 
 namespace freeling_analyzer{
@@ -12,21 +16,33 @@ namespace freeling_analyzer{
 
 class analyzer{
 	
-public:	
-		std::string analyze(const std::string& text);
-
+	freeling::analyzer *anlz;
+	
+	std::string _lang;
+public:
+	analyzer( const std::string& lang);
+	~analyzer();
+	
+	
+	
+	
+	std::string analyze(const std::string& text);
+	
+	bool is_lang(const std::string& lang){
+		return 0 == _lang.compare(lang);
+	}
 };
 
 
 
 class analyzer_pool{
-friend struct analyzer_proxy;
+	friend struct analyzer_proxy;
 
-
-	analyzer* get(const std::string& );
+	analyzer* get(const std::string& alang);
 	void store(analyzer*);
-
-
+private:
+	std::list<analyzer*> pool;
+	std::mutex _mutex;
 };
 
 
@@ -54,16 +70,22 @@ private:
 
 
 
+analyzer_pool& get_static_pool();
+
+
 struct analyzer_factory{
-    analyzer_factory(){}
-    void initialize(analyzer_pool& a){
+    analyzer_factory(){
+	}
+//    void initialize(analyzer_pool& a){
+//
+//    }
+
+    analyzer_pool& instantiate(){
+        return *_pool;
 
     }
-
-    analyzer_pool instantiate(){
-        return analyzer_pool();
-
-    }
+    std::shared_ptr<analyzer_pool> _pool;
+    
 };
 
 
