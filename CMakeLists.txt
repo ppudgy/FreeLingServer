@@ -9,11 +9,11 @@ project(freelingserver)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_EXE_LINKER_FLAGS "-static")
+##set(CMAKE_EXE_LINKER_FLAGS "-static")
 
-find_library(MICROHTTPD libmicrohttpd)
+#find_library(MICROHTTPD libmicrohttpd)
 #set (Boost_USE_MULTITHREADED ON)
-#find_package (Boost 1.55.0 REQUIRED)
+#find_package (Boost)
 
 
 add_definitions(-std=c++14 -fpermissive) # For old cmake versions
@@ -27,13 +27,19 @@ set(SOURCE_FILES
     src/string_util.h
     src/analyzer.cpp
     src/analyzer.h
+    src/config.cpp
+    src/config.h
     )
 
 add_executable(freelingserver ${SOURCE_FILES})
 #target_link_libraries(freelingserver microhttpd pthread ${Boost_LIBRARIES})
-target_link_libraries(freelingserver 
-		microhttpd pthread freeling foma treeler z 
-		icui18n icuuc icudata icule icuio iculx icutu icutest
-		boost_system boost_regex
-		
-		)
+#target_link_libraries(freelingserver 
+#		microhttpd pthread freeling foma treeler z 
+#		icui18n icuuc icudata icule icuio iculx icutu icutest
+#		${Boost_LIBRARIES}
+#		gnutls
+#		)
+
+
+target_link_libraries(freelingserver microhttpd pthread freeling boost_system)
+

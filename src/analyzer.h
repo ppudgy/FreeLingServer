@@ -4,9 +4,11 @@
 #include <string>
 #include <list>
 #include <mutex>
+#include <memory>
 
 #include <freeling/morfo/analyzer.h>
 
+#include "config.h"
 
 
 namespace freeling_analyzer{
@@ -16,11 +18,12 @@ namespace freeling_analyzer{
 
 class analyzer{
 	
-	freeling::analyzer *anlz;
-	
+
+	freeling::analyzer *_anlz;
+	config* _cfg;
 	std::string _lang;
 public:
-	analyzer( const std::string& lang);
+	analyzer( const std::string& lang, config* cfg);
 	~analyzer();
 	
 	
@@ -41,8 +44,13 @@ class analyzer_pool{
 	analyzer* get(const std::string& alang);
 	void store(analyzer*);
 private:
+	analyzer* create_new_analyzer(const std::string& alang);
+
 	std::list<analyzer*> pool;
 	std::mutex _mutex;
+	
+	std::string freeling_path;
+	
 };
 
 
@@ -82,10 +90,8 @@ struct analyzer_factory{
 
     analyzer_pool& instantiate(){
         return *_pool;
-
     }
     std::shared_ptr<analyzer_pool> _pool;
-    
 };
 
 

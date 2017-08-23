@@ -7,25 +7,29 @@
 
 //--------------------------------------------------  analyzer
 
-freeling_analyzer::analyzer::analyzer( const std::string& lang){
+
+
+
+freeling_analyzer::analyzer::analyzer( const std::string& lang, config* cfg):_lang(lang), _cfg(cfg){
+	_anlz = new freeling::analyzer(_cfg->get_config_option());
 	
-	freeling::analyzer::config_options co;
+	_anlz->set_current_invoke_options(_cfg->get_invoke_option());
 	
 	
-	
-	
-	
-	
-	
-	anlz = new freeling::analyzer(co);
 }
 
 freeling_analyzer::analyzer::~analyzer(){
-	
+		
+		delete _anlz;
+		delete _cfg;
 }
 
 
 std::string freeling_analyzer::analyzer::analyze(const std::string& text){
+	
+	
+	
+	
 	
 	return text + " is analyzed.";
 }
@@ -40,10 +44,7 @@ std::string freeling_analyzer::analyzer::analyze(const std::string& text){
 
 freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::get(const std::string& alang){
 		std::lock_guard<std::mutex> locker(_mutex);
-	
-	
 		analyzer* result = nullptr;
-		
 		for(auto it = pool.begin(); it != pool.end(); it++){
 			result = *it;
 			if(result != nullptr && result->is_lang(alang)){
@@ -52,7 +53,7 @@ freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::get(const std::st
 			}
 		}
 		if(result == nullptr){
-			result = new analyzer(alang);
+			result = create_new_analyzer(alang);
 		}
 		return result;
 	}
@@ -64,3 +65,10 @@ void freeling_analyzer::analyzer_pool::store(analyzer* analyzer){
 	pool.insert(pool.begin(), analyzer);
 }
 
+freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::create_new_analyzer(const std::string& alang){
+	// создать/получить конфигурацию
+	config* cfg = config::create_config(alang);
+	
+	
+	return new analyzer(alang, cfg);
+}

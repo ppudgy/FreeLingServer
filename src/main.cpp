@@ -30,10 +30,6 @@ using namespace s;
 using namespace sl;
 using namespace iod;
 
-
-
-
-
 /**
  *  GET             /              - выдать информацию о программе (application/json, text/html, text/xml)
  *  GET, POST       /freeling      - провести морфологический разбор текста (application/json, text/html, text/xml)
@@ -41,7 +37,6 @@ using namespace iod;
  *
  *
  */
-
 auto hello_api = http_api(
     POST / _freeling * post_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp, freeling_analyzer::analyzer_pool& pool, auto p) {
         // получить строку для анализа
@@ -49,14 +44,11 @@ auto hello_api = http_api(
         std::string lang = string_util::parse_http_accept_lang(ac_lang);
 
         freeling_analyzer::analyzer_proxy proxy(pool, lang);
-        
-		std::string at = proxy->analyze(p.text);
-
-
-
         // проанализировать строку
         //
         // 
+		std::string at = proxy->analyze(p.text);
+
         std::string result = "freeling POST : " + at;
         return result;
     },
@@ -68,10 +60,10 @@ auto hello_api = http_api(
         std::string lang = string_util::parse_http_accept_lang(ac_lang);
         
         freeling_analyzer::analyzer_proxy proxy(pool, lang);
+        // проанализировать строку
+        //
+        // 
 		std::string at = proxy->analyze( p.text );
-        
-        
-        
         
         std::string result = "freeling GET: " + at;
         return result;
