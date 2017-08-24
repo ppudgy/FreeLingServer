@@ -11,36 +11,35 @@
 
 
 freeling_analyzer::analyzer::analyzer( const std::string& lang, config* cfg):_lang(lang), _cfg(cfg){
-	_anlz = new freeling::analyzer(_cfg->get_config_option());
 	
-	_anlz->set_current_invoke_options(_cfg->get_invoke_option());
+	if(_cfg){
+		_anlz = new freeling::analyzer(_cfg->get_config_option());
+		_anlz->set_current_invoke_options(_cfg->get_invoke_option());
+	}
 	
 	
 }
 
 freeling_analyzer::analyzer::~analyzer(){
-		
+	if(_cfg){
 		delete _anlz;
 		delete _cfg;
+	}
 }
 
 
 std::string freeling_analyzer::analyzer::analyze(const std::string& text){
+	std::string result = "";
 	
+	if(_cfg){
+		result = text + " is analyzed.";
+	}
 	
-	
-	
-	
-	return text + " is analyzed.";
+	return result;
 }
 
 //--------------------------------------------------  analyzer_pool
 
-//freeling_analyzer::analyzer_pool _pool;
-
-//freeling_analyzer::analyzer_pool& get_static_pool(){
-	//	return _pool;
-//}
 
 freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::get(const std::string& alang){
 		std::lock_guard<std::mutex> locker(_mutex);

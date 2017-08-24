@@ -78,9 +78,6 @@ private:
 
 
 
-analyzer_pool& get_static_pool();
-
-
 struct analyzer_factory{
     analyzer_factory(){
 	}
