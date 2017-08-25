@@ -42,8 +42,10 @@ std::string freeling_analyzer::analyzer::analyze(const std::string& text){
 
 
 freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::get(const std::string& alang){
+	
 		std::lock_guard<std::mutex> locker(_mutex);
 		analyzer* result = nullptr;
+		
 		for(auto it = pool.begin(); it != pool.end(); it++){
 			result = *it;
 			if(result != nullptr && result->is_lang(alang)){
@@ -67,7 +69,6 @@ void freeling_analyzer::analyzer_pool::store(analyzer* analyzer){
 freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::create_new_analyzer(const std::string& alang){
 	// создать/получить конфигурацию
 	config* cfg = config::create_config(alang);
-	
 	
 	return new analyzer(alang, cfg);
 }

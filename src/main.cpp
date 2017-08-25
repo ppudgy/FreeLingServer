@@ -53,16 +53,14 @@ auto hello_api = http_api(
         return result;
     },
     GET / _freeling * get_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp, freeling_analyzer::analyzer_pool& pool, auto p) {
-        //const char* ac_lang = req->get_header("Accept-Language");
         std::string ac_lang = req->get_header("Accept-Language");
-        //const char* ac_acc = req->get_header("Accept");
-        
         std::string lang = string_util::parse_http_accept_lang(ac_lang);
         
         freeling_analyzer::analyzer_proxy proxy(pool, lang);
         // проанализировать строку
         //
         // 
+
 		std::string at = proxy->analyze( p.text );
         
         std::string result = "freeling GET: " + at;

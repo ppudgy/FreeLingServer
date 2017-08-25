@@ -2,6 +2,9 @@
 #define FLS_CONFIG_H
 
 
+#include <string>
+#include <map>
+
 #include <freeling/morfo/analyzer.h>
 
 
@@ -15,9 +18,14 @@ class config{
 	config(const config&) = delete;
 	const config& operator=(const config&) = delete;
 	
-	bool is_lang_supported(const std::string& lang) const;
-	void fill_config_option(const std::string &path, const std::string &lang);
+	
+	void fill_config_option(const std::wstring &path, const std::wstring &lang);
 	void fill_invoke_option();
+	void init();
+	std::wstring get_freeling_path() const;
+	
+	
+	static std::map<std::string, config*> _lang_config_map;
 	
 	bool _is_init;
 	std::string _lang;
@@ -26,9 +34,9 @@ class config{
 	
 	public:
 		static config* create_config(const std::string& lang);
+		static bool is_lang_supported(const std::string& lang);
 		
 		
-		void init();
 		
 		
 		

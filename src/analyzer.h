@@ -40,17 +40,19 @@ public:
 
 class analyzer_pool{
 	friend struct analyzer_proxy;
-
+public:
+	analyzer_pool(){}
+private:
 	analyzer* get(const std::string& alang);
 	void store(analyzer*);
-private:
-	analyzer* create_new_analyzer(const std::string& alang);
 
-	std::list<analyzer*> pool;
+	analyzer_pool(const analyzer_pool&) = delete;
+	analyzer_pool(const analyzer_pool&&) = delete;
+	const analyzer_pool& operator= (const analyzer_pool&) = delete;
+
+	analyzer* create_new_analyzer(const std::string& alang);
 	std::mutex _mutex;
-	
-	std::string freeling_path;
-	
+	std::list<analyzer*> pool;
 };
 
 
@@ -80,6 +82,7 @@ private:
 
 struct analyzer_factory{
     analyzer_factory(){
+		_pool = std::make_shared<analyzer_pool>();
 	}
 //    void initialize(analyzer_pool& a){
 //
