@@ -83,6 +83,9 @@ private:
 struct analyzer_factory{
     analyzer_factory(){
 		_pool = std::make_shared<analyzer_pool>();
+		
+		
+		
 	}
 //    void initialize(analyzer_pool& a){
 //

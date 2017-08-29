@@ -70,20 +70,22 @@ void freeling_analyzer::config::fill_config_option(const std::wstring &path, con
   co.MACO_PunctuationFile = path + L"/common/punct.dat";
   co.MACO_ProbabilityThreshold = 0.001;
   /// NEC config file
-  co.NEC_NECFile = lpath + L"nerc/nec/nec-ab-poor1.dat";
+//  co.NEC_NECFile = lpath + L"nerc/nec/nec-ab-poor1.dat";
   /// Sense annotator and WSD config files
   co.SENSE_ConfigFile = lpath + L"senses.dat";
   co.UKB_ConfigFile = lpath + L"ukb.dat";
   /// Tagger options
   co.TAGGER_HMMFile = lpath + L"tagger.dat";
+  
+  
   co.TAGGER_ForceSelect=  freeling::RETOK;
   /// Chart parser config file
-  co.PARSER_GrammarFile = lpath + L"chunker/grammar-chunk.dat";
+//  co.PARSER_GrammarFile = lpath + L"chunker/grammar-chunk.dat";
   /// Dependency parsers config files
-  co.DEP_TxalaFile = lpath + L"dep_txala/dependences.dat";   
-  co.DEP_TreelerFile = lpath + L"dep_treeler/dependences.dat";   
+//  co.DEP_TxalaFile = lpath + L"dep_txala/dependences.dat";   
+//  co.DEP_TreelerFile = lpath + L"dep_treeler/dependences.dat";   
   /// Coreference resolution config file
-  co.COREF_CorefFile = lpath + L"coref/relaxcor/relaxcor.dat";
+//  co.COREF_CorefFile = lpath + L"coref/relaxcor/relaxcor.dat";
 }
 
 

@@ -104,6 +104,10 @@ auto hello_api = http_api(
 
 int main(const int argc, const char* argv[])
 {
+	freeling::util::init_locale(L"ru_RU.UTF-8");
+	
+	
+	
     auto opts = parse_command_line(argc, argv, _port = int(8585), _nodaemon = bool(false));
 
     if(!opts.nodaemon){
