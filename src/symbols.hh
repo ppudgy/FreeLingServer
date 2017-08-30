@@ -29,10 +29,26 @@
 //    iod_define_symbol(help);
 //#endif
 
+#ifndef IOD_SYMBOL_word
+#define IOD_SYMBOL_word
+    iod_define_symbol(word);
+#endif
+
+#ifndef IOD_SYMBOL_lemma
+#define IOD_SYMBOL_lemma
+    iod_define_symbol(lemma);
+#endif
+#ifndef IOD_SYMBOL_tag
+#define IOD_SYMBOL_tag
+    iod_define_symbol(tag);
+#endif
+
+
 #ifndef IOD_SYMBOL_text
-#define IOD_SYMBOLtext
+#define IOD_SYMBOL_text
     iod_define_symbol(text);
 #endif
+
 #ifndef IOD_SYMBOL_freeling
 #define IOD_SYMBOL_freeling
     iod_define_symbol(freeling);

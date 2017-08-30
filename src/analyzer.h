@@ -8,16 +8,29 @@
 
 #include <freeling/morfo/analyzer.h>
 
+#include "symbols.hh"
 #include "config.h"
 
 
 namespace freeling_analyzer{
 
 
+using namespace s;
+//using namespace sl;
+using namespace iod;
+
+
+
+typedef decltype(D(_word = std::string(),
+                   _lemma = std::string(),
+                   _tag = std::string())) word_type;
+
+
+typedef std::vector<word_type> sentence_type;
 
 
 class analyzer{
-	
+
 
 	freeling::analyzer *_anlz;
 	config* _cfg;
@@ -25,12 +38,12 @@ class analyzer{
 public:
 	analyzer( const std::string& lang, config* cfg);
 	~analyzer();
-	
-	
-	
-	
-	std::string analyze(const std::string& text);
-	
+
+
+
+
+	std::vector<sentence_type> analyze(const std::string& text);
+
 	bool is_lang(const std::string& lang){
 		return 0 == _lang.compare(lang);
 	}
@@ -58,7 +71,7 @@ private:
 
 
 struct analyzer_proxy{
-	
+
 	analyzer_proxy(analyzer_pool& pool, const std::string &lang):_pool(pool), _lang(lang){
 		_analyzer = _pool.get(_lang);
 	}
@@ -69,7 +82,7 @@ struct analyzer_proxy{
 
 	analyzer* operator->(){
 		return _analyzer;
-	}	
+	}
 
 
 private:
@@ -83,9 +96,9 @@ private:
 struct analyzer_factory{
     analyzer_factory(){
 		_pool = std::make_shared<analyzer_pool>();
-		
-		
-		
+
+
+
 	}
 //    void initialize(analyzer_pool& a){
 //

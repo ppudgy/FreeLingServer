@@ -7,7 +7,7 @@
  *
  *
  *
- * 
+ *
  */
 
 #include <unistd.h>
@@ -18,6 +18,7 @@
 
 
 #include <iod/parse_command_line.hh>
+#include <iod/json.hh>
 #include <silicon/backends/mhd.hh>
 
 
@@ -45,25 +46,22 @@ auto hello_api = http_api(
 
         freeling_analyzer::analyzer_proxy proxy(pool, lang);
         // проанализировать строку
-        //
-        // 
-		std::string at = proxy->analyze(p.text);
+		auto at = proxy->analyze(p.text);
+        std::string result = iod::json_encode(at);
 
-        std::string result = "freeling POST : " + at;
+        // TODO add result encoding
+        resp->set_header("Content-Type", "application/json");
         return result;
     },
     GET / _freeling * get_parameters(_text = std::string()) = [] (mhd_request* req, mhd_response* resp, freeling_analyzer::analyzer_pool& pool, auto p) {
         std::string ac_lang = req->get_header("Accept-Language");
         std::string lang = string_util::parse_http_accept_lang(ac_lang);
-        
+
         freeling_analyzer::analyzer_proxy proxy(pool, lang);
         // проанализировать строку
-        //
-        // 
-
-		std::string at = proxy->analyze( p.text );
-        
-        std::string result = "freeling GET: " + at;
+		auto at = proxy->analyze(p.text);
+        std::string result = iod::json_encode(at);
+        resp->set_header("Content-Type", "application/json");
         return result;
     },
     GET /   _cfg = [](){
@@ -82,10 +80,10 @@ auto hello_api = http_api(
         //  uptime: int; // in second
         //
         // создать структуру ответа
-        
+
         // если запрашиваемый формат HTML, сформировать и вернуть
         // если запрашиваемый формат XML, сформировать и вернуть
-        // 
+        //
 
         const char* ac_acc = req->get_header("Accept");
 
@@ -94,7 +92,7 @@ auto hello_api = http_api(
 //        }else if(sting_utils::contain(ac_acc, "text/xml")){
 
 //        }else if(sting_utils::contain(ac_acc, "application/json")){
-            
+
 //        }
 
         return "about";
@@ -105,9 +103,9 @@ auto hello_api = http_api(
 int main(const int argc, const char* argv[])
 {
 	freeling::util::init_locale(L"ru_RU.UTF-8");
-	
-	
-	
+
+
+
     auto opts = parse_command_line(argc, argv, _port = int(8585), _nodaemon = bool(false));
 
     if(!opts.nodaemon){
