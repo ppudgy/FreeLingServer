@@ -5,11 +5,12 @@
 #include <string>
 #include <map>
 
+#include <silicon/error.hh>
+
 #include <freeling/morfo/analyzer.h>
 
 
 namespace freeling_analyzer{
-
 
 
 class config{
@@ -32,7 +33,8 @@ class config{
 		
 		
 		static std::string _freeling_path;
-		static std::map<std::string, config*> _lang_config_map;		
+		static std::map<std::string, config*> _lang_config_map;
+		static std::map<std::string, bool>    _lang_suport_map;
 	public:
 		static config* create_config(const std::string& lang);
 		static bool set_freeling_path(const std::string& path);

@@ -1,5 +1,5 @@
 
-
+#include <silicon/error.hh>
 
 
 #include "analyzer.h"
@@ -35,41 +35,40 @@ freeling_analyzer::analyzer::~analyzer(){
 std::vector<freeling_analyzer::sentence_type>  freeling_analyzer::analyzer::analyze(const std::string& text){
     std::vector<freeling_analyzer::sentence_type> result;
 
-	if(_cfg){
-        std::list<freeling::sentence> sentenses;
+	if(!_cfg) throw sl::error::bad_request( _lang + " lang is not suported");
 
-        std::wstring lt = freeling::util::string2wstring(text);
-        _anlz->analyze(lt, sentenses, true);
+
+
+    std::list<freeling::sentence> sentenses;
+
+    std::wstring lt = freeling::util::string2wstring(text);
+    _anlz->analyze(lt, sentenses, true);
 //        std::wcout << L"--------------------------------------------------------------------------"<<std::endl;
-        for(auto sit = sentenses.begin(); sit != sentenses.end(); sit++){
-            sentence_type sentence;
-//            std::wcout << L"{" << std::endl;
-            for(auto wit = sit->begin(); wit != sit->end(); wit++){
-                word_type w;
-                w.word = freeling::util::wstring2string(wit->get_form());
-                w.lemma = freeling::util::wstring2string(wit->get_lemma());
-                w.tag = freeling::util::wstring2string(wit->get_tag());
+	for(auto sit = sentenses.begin(); sit != sentenses.end(); sit++){
+		sentence_type sentence;
+//      std::wcout << L"{" << std::endl;
+        for(auto wit = sit->begin(); wit != sit->end(); wit++){
+			word_type w;
+            w.word = freeling::util::wstring2string(wit->get_form());
+            w.lemma = freeling::util::wstring2string(wit->get_lemma());
+            w.tag = freeling::util::wstring2string(wit->get_tag());
+            sentence.push_back(w);
 
-                sentence.push_back(w);
-
-//                std::wstring word = wit->get_form();
-//                std::wstring lemma = wit->get_lemma();
-//                std::wstring tag = wit->get_tag();
-//
-//                std::wcout  << L"\t(" << word << L" : "<< lemma << L" : " << tag << L"";
-//
-//                for(auto lit = wit->begin(); lit!= wit->end(); lit++){
-//                        std::wstring lemma = lit->get_lemma();
-//                        std::wstring tag = lit->get_tag();
-//
-//                        std::wcout << L"[" << lemma << L" : " << tag << L"]";
-//                }
-//                std::wcout << L")" <<std::endl;
-            }
-            result.push_back(sentence);
-//            std::wcout << L"}" << std::endl;
+//          std::wstring word = wit->get_form();
+//          std::wstring lemma = wit->get_lemma();
+//          std::wstring tag = wit->get_tag();
+//          std::wcout  << L"\t(" << word << L" : "<< lemma << L" : " << tag << L"";
+//          for(auto lit = wit->begin(); lit!= wit->end(); lit++){
+//              std::wstring lemma = lit->get_lemma();
+//              std::wstring tag = lit->get_tag();
+//              std::wcout << L"[" << lemma << L" : " << tag << L"]";
+//          }
+//          std::wcout << L")" <<std::endl;
         }
-	}
+        result.push_back(sentence);
+//      std::wcout << L"}" << std::endl;
+    }
+	
 	return result;
 }
 

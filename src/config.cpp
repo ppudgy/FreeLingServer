@@ -1,6 +1,7 @@
 #include <sys/stat.h>
 
 
+
 #include "config.h"
 #include "string_util.h"
 
@@ -13,6 +14,9 @@ char DEFAULT_FREELING_PATH[] = "/usr/local/share/freeling";
 std::string freeling_analyzer::config::_freeling_path = "";
 std::map<std::string, freeling_analyzer::config*> freeling_analyzer::config::_lang_config_map;
 
+std::map<std::string, bool> freeling_analyzer::config::_lang_suport_map = {{"ru", true}, {"en", true}};
+
+
 freeling_analyzer::config* freeling_analyzer::config::create_config(const std::string& lang){
 	//DONE create std::map<std::string, freeling_analyzer::config> and return config from map
 	config* result = nullptr;
@@ -23,6 +27,8 @@ freeling_analyzer::config* freeling_analyzer::config::create_config(const std::s
 			result->init();
 			_lang_config_map[lang] = result;
 		}
+	}else{
+		throw sl::error::bad_request( lang + " lang is not suported");
 	}
 	return result;
 }
@@ -59,7 +65,8 @@ bool freeling_analyzer::config::set_freeling_path(const std::string& path){
 }
 
 bool freeling_analyzer::config::is_lang_supported(const std::string& lang) { // TODO realize
-	return true;
+	bool result = _lang_suport_map[lang];
+	return result;
 }
 
 
