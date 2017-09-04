@@ -106,7 +106,7 @@ int main(const int argc, const char* argv[])
 
 
 
-    auto opts = parse_command_line(argc, argv, _port = int(8585), _nodaemon = bool(false));
+    auto opts = parse_command_line(argc, argv, _port = int(8585), _nodaemon = bool(false), _freeling = std::string("/usr/local/share/freeling"));
 
     if(!opts.nodaemon){
         if(0 != daemon(0, 0)){
@@ -114,7 +114,14 @@ int main(const int argc, const char* argv[])
             exit(1);
         }
     }
-
+	
+	std::string freeling_path = opts.freeling;
+	
+	if(!freeling_analyzer::config::set_freeling_path(freeling_path))
+	{
+		std::cerr << "do not find freeling data path" << std::endl;
+		exit(2);
+	}
 
 
     int port = opts.port;
