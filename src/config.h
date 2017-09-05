@@ -42,6 +42,8 @@ class config{
 		
 		
 		
+		static std::string get_root_html(const std::string& lang);
+		
 		
 		
 		freeling::analyzer::config_options& get_config_option(){return co;}; 

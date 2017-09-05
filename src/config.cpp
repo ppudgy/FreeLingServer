@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "string_util.h"
+#include "html_util.h"
 
 
 
@@ -18,7 +19,6 @@ std::map<std::string, bool> freeling_analyzer::config::_lang_suport_map = {{"ru"
 
 
 freeling_analyzer::config* freeling_analyzer::config::create_config(const std::string& lang){
-	//DONE create std::map<std::string, freeling_analyzer::config> and return config from map
 	config* result = nullptr;
 	if(is_lang_supported(lang)){
 		result = _lang_config_map[lang];
@@ -64,11 +64,10 @@ bool freeling_analyzer::config::set_freeling_path(const std::string& path){
 	
 }
 
-bool freeling_analyzer::config::is_lang_supported(const std::string& lang) { // TODO realize
+bool freeling_analyzer::config::is_lang_supported(const std::string& lang) {
 	bool result = _lang_suport_map[lang];
 	return result;
 }
-
 
 void freeling_analyzer::config::init(){
 	if(_is_init) return;
@@ -80,14 +79,11 @@ void freeling_analyzer::config::init(){
 	_is_init = true;
 }
 
-
 std::wstring freeling_analyzer::config::get_freeling_path() const{
 	std::wstring result;
 	result = string_util::utf8_to_wchar_t(_freeling_path);
 	return result;
 }
-
-
 
 void freeling_analyzer::config::fill_config_option(const std::wstring &path, const std::wstring &lang) {
   /// Language of text to process
@@ -131,7 +127,6 @@ void freeling_analyzer::config::fill_config_option(const std::wstring &path, con
 //  co.COREF_CorefFile = lpath + L"coref/relaxcor/relaxcor.dat";
 }
 
-
 ///////////////////////////////////////////////////
 /// Load an ad-hoc set of invoke options
 
@@ -161,7 +156,6 @@ void freeling_analyzer::config::fill_invoke_option() {
   io.DEP_which = freeling::TREELER;
 }
 
-
 bool freeling_analyzer::config::find_freeling_data(const std::string& path){
 	struct stat  buf;
 
@@ -183,4 +177,10 @@ bool freeling_analyzer::config::find_freeling_data(const std::string& path){
 
 
 
+
+std::string freeling_analyzer::config::get_root_html(const std::string& lang){
+	if(!is_lang_supported(lang))
+		throw sl::error::bad_request( lang + " lang is not suported");
+	return html::create_html(lang);
+}
 

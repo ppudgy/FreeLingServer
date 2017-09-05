@@ -64,11 +64,11 @@ auto hello_api = http_api(
         resp->set_header("Content-Type", "application/json");
         return result;
     },
-    GET /   _cfg = [](){
+    GET /   _cfg = [](){  
         // если HTML - вернуть форму с конфигурацией и возможностью ее редактироать
         // если json, xml - вернуть данные
     },
-    POST / _cfg = [](mhd_request* req, mhd_response* resp){
+    POST / _cfg = [](mhd_request* req, mhd_response* resp){  // TODO delete
         // если json, xml - установить конфигурацию и вернуть новую конфигурацию
         // если параметры формы - установить конфигурацию и вернуть форму с кофигурацией и возможностью ее редактировать
     },
@@ -80,22 +80,18 @@ auto hello_api = http_api(
         //  uptime: int; // in second
         //
         // создать структуру ответа
-
-        // если запрашиваемый формат HTML, сформировать и вернуть
-        // если запрашиваемый формат XML, сформировать и вернуть
-        //
-
+		std::string result = "about";
         const char* ac_acc = req->get_header("Accept");
-
-//        if(sting_utils::contain(ac_acc, "text/html")){
-
-//        }else if(sting_utils::contain(ac_acc, "text/xml")){
-
-//        }else if(sting_utils::contain(ac_acc, "application/json")){
-
-//        }
-
-        return "about";
+        std::string acc_str (ac_acc);
+        if(acc_str.find("/json") != std::string::npos){
+			
+		}else if (acc_str.find("/html") != std::string::npos){
+			std::string ac_lang = req->get_header("Accept-Language");
+			std::string lang = string_util::parse_http_accept_lang(ac_lang);
+			result = freeling_analyzer::config::get_root_html(lang);
+		}else
+			throw sl::error::bad_request(" content type is not suported");
+        return result;
     }
 
 );

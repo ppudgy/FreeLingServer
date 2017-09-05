@@ -29,6 +29,8 @@ set(SOURCE_FILES
     src/analyzer.h
     src/config.cpp
     src/config.h
+    src/html_util.cpp
+    src/html_util.h
     )
 
 add_executable(freelingserver ${SOURCE_FILES})
