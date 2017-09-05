@@ -83,12 +83,13 @@ auto hello_api = http_api(
 		std::string result = "about";
         const char* ac_acc = req->get_header("Accept");
         std::string acc_str (ac_acc);
+        auto about = freeling_analyzer::config::get_about();
         if(acc_str.find("/json") != std::string::npos){
-			
+			result = iod::json_encode(about);	
 		}else if (acc_str.find("/html") != std::string::npos){
 			std::string ac_lang = req->get_header("Accept-Language");
 			std::string lang = string_util::parse_http_accept_lang(ac_lang);
-			result = freeling_analyzer::config::get_root_html(lang);
+			result = freeling_analyzer::config::get_root_html(lang, about);
 		}else
 			throw sl::error::bad_request(" content type is not suported");
         return result;
@@ -113,7 +114,7 @@ int main(const int argc, const char* argv[])
 	
 	std::string freeling_path = opts.freeling;
 	
-	if(!freeling_analyzer::config::set_freeling_path(freeling_path))
+	if(!freeling_analyzer::config::initialize(freeling_path))
 	{
 		std::cerr << "do not find freeling data path" << std::endl;
 		exit(2);

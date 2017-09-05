@@ -54,5 +54,23 @@
     iod_define_symbol(freeling);
 #endif
 
+#ifndef IOD_SYMBOL_name
+#define IOD_SYMBOL_name
+    iod_define_symbol(name);
+#endif
 
+#ifndef IOD_SYMBOL_version_major
+#define IOD_SYMBOL_version_major
+    iod_define_symbol(version_major);
+#endif
+
+#ifndef IOD_SYMBOL_version_minor
+#define IOD_SYMBOL_version_minor
+    iod_define_symbol(version_minor);
+#endif
+
+#ifndef IOD_SYMBOL_uptime
+#define IOD_SYMBOL_uptime
+    iod_define_symbol(uptime);
+#endif
 

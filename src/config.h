@@ -4,13 +4,36 @@
 
 #include <string>
 #include <map>
+#include <chrono>
 
 #include <silicon/error.hh>
 
 #include <freeling/morfo/analyzer.h>
 
+#include "symbols.hh"
+
 
 namespace freeling_analyzer{
+
+
+using namespace s;
+using namespace iod;
+
+   //  name:string
+        //  major:string
+        //  minor:string
+        //  uptime: int; // in second
+
+typedef decltype(D(_name = std::string(),
+                   _version_major = int(),
+                   _version_minor = int(),
+                   _uptime = long(),
+                   _freeling = std::string()
+                   )) about_type;
+                   
+
+
+
 
 
 class config{
@@ -32,18 +55,20 @@ class config{
 		static bool find_freeling_data(const std::string& path);
 		
 		
-		static std::string _freeling_path;
-		static std::map<std::string, config*> _lang_config_map;
-		static std::map<std::string, bool>    _lang_suport_map;
+		static std::string 								_freeling_path;
+		static std::map<std::string, config*> 			_lang_config_map;
+		static std::map<std::string, bool>    			_lang_suport_map;
+		static std::chrono::system_clock::time_point 	_start;
+
 	public:
 		static config* create_config(const std::string& lang);
-		static bool set_freeling_path(const std::string& path);
+		static bool initialize(const std::string& path);
 		static bool is_lang_supported(const std::string& lang);
 		
 		
 		
-		static std::string get_root_html(const std::string& lang);
-		
+		static std::string get_root_html(const std::string& lang, const about_type& about);
+		static about_type get_about();
 		
 		
 		freeling::analyzer::config_options& get_config_option(){return co;}; 

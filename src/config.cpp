@@ -14,8 +14,8 @@ char DEFAULT_FREELING_PATH[] = "/usr/local/share/freeling";
 
 std::string freeling_analyzer::config::_freeling_path = "";
 std::map<std::string, freeling_analyzer::config*> freeling_analyzer::config::_lang_config_map;
-
 std::map<std::string, bool> freeling_analyzer::config::_lang_suport_map = {{"ru", true}, {"en", true}};
+std::chrono::system_clock::time_point 	freeling_analyzer::config::_start;
 
 
 freeling_analyzer::config* freeling_analyzer::config::create_config(const std::string& lang){
@@ -35,7 +35,10 @@ freeling_analyzer::config* freeling_analyzer::config::create_config(const std::s
 
 
 
-bool freeling_analyzer::config::set_freeling_path(const std::string& path){
+bool freeling_analyzer::config::initialize(const std::string& path){
+// init start time	
+	_start = std::chrono::system_clock::now();
+// init freeling path	
 	if(path.size() > 0)
 		_freeling_path = path;
 	
@@ -56,6 +59,8 @@ bool freeling_analyzer::config::set_freeling_path(const std::string& path){
 		}
 	}
 	_freeling_path = path;
+	
+	
 	
 
 	
@@ -178,9 +183,25 @@ bool freeling_analyzer::config::find_freeling_data(const std::string& path){
 
 
 
-std::string freeling_analyzer::config::get_root_html(const std::string& lang){
+std::string freeling_analyzer::config::get_root_html(const std::string& lang, const about_type& about){
 	if(!is_lang_supported(lang))
 		throw sl::error::bad_request( lang + " lang is not suported");
-	return html::create_html(lang);
+	return html::create_html(lang, about);
 }
 
+freeling_analyzer::about_type freeling_analyzer::config::get_about(){
+	about_type result;
+
+
+
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	
+	result.name = "freelingserver";
+	result.version_major = 0;
+	result.version_minor = 1;
+	result.uptime = std::chrono::duration_cast<std::chrono::milliseconds>(now - _start).count();
+	result.freeling = _freeling_path;
+	
+	
+	return result;
+}
