@@ -43,5 +43,5 @@ add_executable(freelingserver ${SOURCE_FILES})
 #		)
 
 
-target_link_libraries(freelingserver microhttpd pthread freeling boost_system)
+target_link_libraries(freelingserver microhttpd pthread freeling boost_system Jinja2CppLight)
 
