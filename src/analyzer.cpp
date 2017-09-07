@@ -10,7 +10,7 @@
 
 
 
-freeling_analyzer::analyzer::analyzer( const std::string& lang, config* cfg):_lang(lang), _cfg(cfg){
+freeling_server::analyzer::analyzer( const std::string& lang, config* cfg):_lang(lang), _cfg(cfg){
 
 	if(_cfg){
 		_anlz = new freeling::analyzer(_cfg->get_config_option());
@@ -20,7 +20,7 @@ freeling_analyzer::analyzer::analyzer( const std::string& lang, config* cfg):_la
 
 }
 
-freeling_analyzer::analyzer::~analyzer(){
+freeling_server::analyzer::~analyzer(){
 	if(_cfg){
 		delete _anlz;
 		delete _cfg;
@@ -32,8 +32,8 @@ freeling_analyzer::analyzer::~analyzer(){
 
 
 
-std::vector<freeling_analyzer::sentence_type>  freeling_analyzer::analyzer::analyze(const std::string& text){
-    std::vector<freeling_analyzer::sentence_type> result;
+std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(const std::string& text){
+    std::vector<freeling_server::sentence_type> result;
 
 	if(!_cfg) throw sl::error::bad_request( _lang + " lang is not suported");
 
@@ -75,7 +75,7 @@ std::vector<freeling_analyzer::sentence_type>  freeling_analyzer::analyzer::anal
 
 //--------------------------------------------------  analyzer_pool
 
-freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::get(const std::string& alang){
+freeling_server::analyzer* freeling_server::analyzer_pool::get(const std::string& alang){
 
 		std::lock_guard<std::mutex> locker(_mutex);
 		analyzer* result = nullptr;
@@ -94,13 +94,13 @@ freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::get(const std::st
 	}
 
 
-void freeling_analyzer::analyzer_pool::store(analyzer* analyzer){
+void freeling_server::analyzer_pool::store(analyzer* analyzer){
 	std::lock_guard<std::mutex> locker(_mutex);
 
 	pool.insert(pool.begin(), analyzer);
 }
 
-freeling_analyzer::analyzer* freeling_analyzer::analyzer_pool::create_new_analyzer(const std::string& alang){
+freeling_server::analyzer* freeling_server::analyzer_pool::create_new_analyzer(const std::string& alang){
 	// создать/получить конфигурацию
 	config* cfg = config::create_config(alang);
 

@@ -1,10 +1,18 @@
 #include <sys/stat.h>
 
 
+#include <string>
+#include <regex>
+#include <locale>
+#include <codecvt>
+
+
+
+#include <stringhelper.h>
+#include <Jinja2CppLight.h>
+
 
 #include "config.h"
-#include "string_util.h"
-#include "html_util.h"
 
 
 
@@ -12,13 +20,13 @@ char DEFAULT_FREELING_PATH[] = "/usr/local/share/freeling";
 
 
 
-std::string freeling_analyzer::config::_freeling_path = "";
-std::map<std::string, freeling_analyzer::config*> freeling_analyzer::config::_lang_config_map;
-std::map<std::string, bool> freeling_analyzer::config::_lang_suport_map = {{"ru", true}, {"en", true}};
-std::chrono::system_clock::time_point 	freeling_analyzer::config::_start;
+std::string freeling_server::config::_freeling_path = "";
+std::map<std::string, freeling_server::config*> freeling_server::config::_lang_config_map;
+std::map<std::string, bool> freeling_server::config::_lang_suport_map = {{"ru", true}, {"en", true}};
+std::chrono::system_clock::time_point 	freeling_server::config::_start;
 
 
-freeling_analyzer::config* freeling_analyzer::config::create_config(const std::string& lang){
+freeling_server::config* freeling_server::config::create_config(const std::string& lang){
 	config* result = nullptr;
 	if(is_lang_supported(lang)){
 		result = _lang_config_map[lang];
@@ -35,7 +43,8 @@ freeling_analyzer::config* freeling_analyzer::config::create_config(const std::s
 
 
 
-bool freeling_analyzer::config::initialize(const std::string& path){
+bool freeling_server::config::initialize(const std::string& path){
+	freeling::util::init_locale(L"ru_RU.UTF-8");
 // init start time	
 	_start = std::chrono::system_clock::now();
 // init freeling path	
@@ -69,28 +78,28 @@ bool freeling_analyzer::config::initialize(const std::string& path){
 	
 }
 
-bool freeling_analyzer::config::is_lang_supported(const std::string& lang) {
+bool freeling_server::config::is_lang_supported(const std::string& lang) {
 	bool result = _lang_suport_map[lang];
 	return result;
 }
 
-void freeling_analyzer::config::init(){
+void freeling_server::config::init(){
 	if(_is_init) return;
 	std::wstring path;
-	std::wstring wlang = string_util::utf8_to_wchar_t(_lang);
+	std::wstring wlang = utf8_to_wchar_t(_lang);
 	path = get_freeling_path();
 	fill_config_option(path, wlang);
 	fill_invoke_option();
 	_is_init = true;
 }
 
-std::wstring freeling_analyzer::config::get_freeling_path() const{
+std::wstring freeling_server::config::get_freeling_path() const{
 	std::wstring result;
-	result = string_util::utf8_to_wchar_t(_freeling_path);
+	result = utf8_to_wchar_t(_freeling_path);
 	return result;
 }
 
-void freeling_analyzer::config::fill_config_option(const std::wstring &path, const std::wstring &lang) {
+void freeling_server::config::fill_config_option(const std::wstring &path, const std::wstring &lang) {
   /// Language of text to process
   //co.Lang = L"en";
   co.Lang = lang;
@@ -135,7 +144,7 @@ void freeling_analyzer::config::fill_config_option(const std::wstring &path, con
 ///////////////////////////////////////////////////
 /// Load an ad-hoc set of invoke options
 
-void freeling_analyzer::config::fill_invoke_option() {
+void freeling_server::config::fill_invoke_option() {
   /// Level of analysis in input and output
   io.InputLevel = freeling::TEXT;
   io.OutputLevel = freeling::DEP;
@@ -161,7 +170,7 @@ void freeling_analyzer::config::fill_invoke_option() {
   io.DEP_which = freeling::TREELER;
 }
 
-bool freeling_analyzer::config::find_freeling_data(const std::string& path){
+bool freeling_server::config::find_freeling_data(const std::string& path){
 	struct stat  buf;
 
 	std::string freeling_en (path + "/en");
@@ -183,13 +192,13 @@ bool freeling_analyzer::config::find_freeling_data(const std::string& path){
 
 
 
-std::string freeling_analyzer::config::get_root_html(const std::string& lang, const about_type& about){
+std::string freeling_server::config::get_root_html(const std::string& lang, const about_type& about){
 	if(!is_lang_supported(lang))
 		throw sl::error::bad_request( lang + " lang is not suported");
-	return html::create_html(lang, about);
+	return create_html(lang, about);
 }
 
-freeling_analyzer::about_type freeling_analyzer::config::get_about(){
+freeling_server::about_type freeling_server::config::get_about(){
 	about_type result;
 
 
@@ -203,5 +212,71 @@ freeling_analyzer::about_type freeling_analyzer::config::get_about(){
 	result.freeling = _freeling_path;
 	
 	
+	return result;
+}
+
+
+
+
+
+std::vector<std::string> freeling_server::resplit(const std::string & s, std::string rgx_str) {
+    std::vector<std::string> elems;
+    std::regex rgx (rgx_str);
+    std::sregex_token_iterator iter(s.begin(), s.end(), rgx, -1);
+    std::sregex_token_iterator end;
+    while (iter != end)  {
+        elems.push_back(*iter);
+        ++iter;
+    }
+    return elems;
+}
+
+
+
+std::string freeling_server::parse_http_accept_lang(const std::string& str){ // TODO realise
+	// Accept-Language:ru,en-US;q=0.8,en;q=0.6
+	std::vector<std::string> lngs = resplit(str, ","); 
+	lngs = resplit(lngs[0], ";"); 
+	lngs = resplit(lngs[0], "-"); 
+    return lngs[0];
+}
+
+    
+    
+std::wstring freeling_server::utf8_to_wchar_t(std::string &str){
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	std::wstring result = converter.from_bytes(str);	
+	return result;
+}
+
+
+std::string html_str = R"html(
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+	<title>FreeLingServer about page</title>
+</head>
+<body>
+	<h1>{{name}}</h1> 
+	<div> Version:  {{version_major}}.{{version_minor}} </div>
+	<div> FreeLing:  {{freeling}} </div>
+	<div> Uptime:  {{uptime}} </div>
+</body>
+</html>
+)html";
+
+
+
+std::string freeling_server::create_html(const std::string& lang, const about_type& about){
+
+	Jinja2CppLight::Template mytemplate( html_str );
+    mytemplate.setValue( "name", about.name );
+    mytemplate.setValue( "version_major", about.version_major);
+    mytemplate.setValue( "version_minor", about.version_minor );
+    mytemplate.setValue( "uptime", std::to_string(about.uptime) );
+    mytemplate.setValue( "freeling", about.freeling );
+    
+    string result = mytemplate.render();
 	return result;
 }

@@ -10,10 +10,10 @@
 
 #include <freeling/morfo/analyzer.h>
 
-#include "symbols.hh"
+#include "main_symbols.hh"
 
 
-namespace freeling_analyzer{
+namespace freeling_server{
 
 
 using namespace s;
@@ -75,6 +75,15 @@ class config{
 		freeling::analyzer::invoke_options& get_invoke_option(){return io;}; 
 	
 };
+
+
+	std::vector<std::string> resplit(const std::string & s, std::string rgx_str = "\\s+");
+	std::string parse_http_accept_lang(const std::string& str);
+	std::wstring utf8_to_wchar_t(std::string &str);
+	std::string create_html(const std::string&lang, const about_type& about);
+
+
+
 
 
 };

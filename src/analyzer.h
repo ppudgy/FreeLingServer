@@ -8,11 +8,10 @@
 
 #include <freeling/morfo/analyzer.h>
 
-#include "symbols.hh"
 #include "config.h"
 
 
-namespace freeling_analyzer{
+namespace freeling_server{
 
 
 using namespace s;
