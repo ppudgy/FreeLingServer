@@ -3,6 +3,8 @@
 
 
 #include "analyzer.h"
+#include "preposition_utils.h"
+
 
 
 //--------------------------------------------------  analyzer
@@ -27,71 +29,66 @@ freeling_server::analyzer::~analyzer(){
 	}
 }
 
-
-
-
-
-
 std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(const std::string& text){
     std::vector<freeling_server::sentence_type> result;
-
 	if(!_cfg) throw sl::error::bad_request( _lang + " lang is not suported");
 
 
-
     std::list<freeling::sentence> sentenses;
-
     std::wstring lt = freeling::util::string2wstring(text);
     _anlz->analyze(lt, sentenses, true);
-//        std::wcout << L"--------------------------------------------------------------------------"<<std::endl;
+	std::vector<priv_word_type> res;
 	for(auto sit = sentenses.begin(); sit != sentenses.end(); sit++){
-		sentence_type sentence;
-//      std::wcout << L"{" << std::endl;
+		std::vector<priv_word_type> sent;
         for(auto wit = sit->begin(); wit != sit->end(); wit++){
-			word_type w;
-            w.word = freeling::util::wstring2string(wit->get_form());
-            w.lemma = freeling::util::wstring2string(wit->get_lemma());
-            w.tag = freeling::util::wstring2string(wit->get_tag());
-            sentence.push_back(w);
-
-//          std::wstring word = wit->get_form();
-//          std::wstring lemma = wit->get_lemma();
-//          std::wstring tag = wit->get_tag();
-//          std::wcout  << L"\t(" << word << L" : "<< lemma << L" : " << tag << L"";
-//          for(auto lit = wit->begin(); lit!= wit->end(); lit++){
-//              std::wstring lemma = lit->get_lemma();
-//              std::wstring tag = lit->get_tag();
-//              std::wcout << L"[" << lemma << L" : " << tag << L"]";
-//          }
-//          std::wcout << L")" <<std::endl;
+			priv_word_type w;
+            w.word = wit->get_form();
+            w.lemma = wit->get_lemma();
+            w.tag = wit->get_tag();
+            sent.push_back(w);
         }
+        auto sentence = trunslate(sent);
         result.push_back(sentence);
-//      std::wcout << L"}" << std::endl;
     }
+	return result;
+}
+
+freeling_server::sentence_type 	freeling_server::analyzer::trunslate(freeling_server::priv_sentence_type sent){
+	sentence_type result;
 	
+	auto res = check_and_translate(sent);
+	
+	for(auto wit = res.begin(); wit != res.end(); wit++){
+		word_type w;
+		w.word = freeling::util::wstring2string(wit->word);
+		w.lemma = freeling::util::wstring2string(wit->lemma);
+		w.tag = freeling::util::wstring2string(wit->tag);
+		
+		result.push_back(w);
+	}
 	return result;
 }
 
 
 //--------------------------------------------------  analyzer_pool
-
 freeling_server::analyzer* freeling_server::analyzer_pool::get(const std::string& alang){
+	std::lock_guard<std::mutex> locker(_mutex);
+	analyzer* result = nullptr;
 
-		std::lock_guard<std::mutex> locker(_mutex);
-		analyzer* result = nullptr;
-
-		for(auto it = pool.begin(); it != pool.end(); it++){
-			result = *it;
-			if(result != nullptr && result->is_lang(alang)){
-				it = pool.erase(it);
-				break;
-			}
+	for(auto it = pool.begin(); it != pool.end(); it++){
+		result = *it;
+		if(result != nullptr && result->is_lang(alang)){
+			it = pool.erase(it);
+			break;
 		}
-		if(result == nullptr){
-			result = create_new_analyzer(alang);
-		}
-		return result;
 	}
+	if(result == nullptr){
+		result = create_new_analyzer(alang);
+	}
+	return result;
+}
+
+
 
 
 void freeling_server::analyzer_pool::store(analyzer* analyzer){
