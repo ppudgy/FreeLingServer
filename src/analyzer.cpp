@@ -4,6 +4,7 @@
 
 #include "analyzer.h"
 #include "preposition_utils.h"
+#include "union_utils.h"
 
 
 
@@ -56,7 +57,8 @@ std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(
 freeling_server::sentence_type 	freeling_server::analyzer::trunslate(freeling_server::priv_sentence_type sent){
 	sentence_type result;
 	
-	auto res = check_and_translate(sent);
+	auto sent_tr = check_and_translate(sent);
+	auto res = check_and_translate_union(sent_tr);
 	
 	for(auto wit = res.begin(); wit != res.end(); wit++){
 		word_type w;

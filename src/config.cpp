@@ -11,7 +11,7 @@
 #include <stringhelper.h>
 #include <Jinja2CppLight.h>
 
-
+#include "utils.h"
 #include "config.h"
 
 
@@ -217,7 +217,7 @@ freeling_server::about_type freeling_server::config::get_about(){
 
 
 
-
+/*
 
 std::vector<std::string> freeling_server::resplit(const std::string & s, std::string rgx_str) {
     std::vector<std::string> elems;
@@ -230,7 +230,7 @@ std::vector<std::string> freeling_server::resplit(const std::string & s, std::st
     }
     return elems;
 }
-
+*/
 
 
 std::string freeling_server::parse_http_accept_lang(const std::string& str){ // TODO realise

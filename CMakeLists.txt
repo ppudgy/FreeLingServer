@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.0)
 project(freelingserver)
 
 set(CMAKE_CXX_STANDARD 14)
-add_definitions( -g -std=c++14 -fpermissive) # For old cmake versions
+add_definitions( -std=c++14 -fpermissive) # For old cmake versions
 
 include_directories(src)
 
@@ -22,6 +22,12 @@ set(SOURCE_FILES
     src/config.h
     src/preposition_utils.cpp
     src/preposition_utils.h
+    src/union_utils.cpp
+    src/union_utils.h
+    src/utils.cpp
+    src/utils.h
+  
+    
 )
 
 add_executable(freelingserver ${SOURCE_FILES})

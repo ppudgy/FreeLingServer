@@ -55,7 +55,7 @@ public:
 	
 };
 
-std::vector<std::string> 	resplit(const std::string & s, std::string rgx_str = "\\s+");
+//std::vector<std::string> 	resplit(const std::string & s, std::string rgx_str = "\\s+");
 std::string 				parse_http_accept_lang(const std::string& str);
 std::wstring 				utf8_to_wchar_t(std::string &str);
 std::string 				create_html(const std::string&lang, const about_type& about);

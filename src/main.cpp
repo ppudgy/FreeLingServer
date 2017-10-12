@@ -23,12 +23,14 @@
 
 
 #include "preposition_utils.h"
+#include "union_utils.h"
 
 
 
 int main(const int argc, const char* argv[])
 {
 	freeling_server::init_preposition_util();
+	freeling_server::init_union_util();
     auto opts = parse_command_line(argc, argv, _port = int(8585), _nodaemon = bool(false), _freeling = std::string("/usr/local/share/freeling"));
     if(!opts.nodaemon){
         if(0 != daemon(0, 0)){
@@ -45,3 +47,4 @@ int main(const int argc, const char* argv[])
     auto ctx = sl::mhd_json_serve(hello_api, middleware_factories(freeling_server::analyzer_factory()),port);
     return 0;
 }
+
