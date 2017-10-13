@@ -31,7 +31,7 @@ set(SOURCE_FILES
 )
 
 add_executable(freelingserver ${SOURCE_FILES})
-target_link_libraries(freelingserver microhttpd pthread freeling boost_system Jinja2CppLight)
+target_link_libraries(freelingserver microhttpd pthread freeling boost_system)
 
 ##set(SIMPLE_TEST_FILES test/simple-test.cpp src/main_api.h src/main_symbols.hh)
 

@@ -1,26 +1,16 @@
-
 #include <silicon/error.hh>
-
 
 #include "analyzer.h"
 #include "preposition_utils.h"
 #include "union_utils.h"
 
-
-
-//--------------------------------------------------  analyzer
-
-
-
+//-------------------------------------------------------  analyzer ----
 
 freeling_server::analyzer::analyzer( const std::string& lang, config* cfg):_lang(lang), _cfg(cfg){
-
 	if(_cfg){
 		_anlz = new freeling::analyzer(_cfg->get_config_option());
 		_anlz->set_current_invoke_options(_cfg->get_invoke_option());
 	}
-
-
 }
 
 freeling_server::analyzer::~analyzer(){
@@ -32,8 +22,7 @@ freeling_server::analyzer::~analyzer(){
 
 std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(const std::string& text){
     std::vector<freeling_server::sentence_type> result;
-	if(!_cfg) throw sl::error::bad_request( _lang + " lang is not suported");
-
+	if(!_cfg) throw sl::error::bad_request( _lang + " is not suported language");
 
     std::list<freeling::sentence> sentenses;
     std::wstring lt = freeling::util::string2wstring(text);
@@ -56,7 +45,6 @@ std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(
 
 freeling_server::sentence_type 	freeling_server::analyzer::trunslate(freeling_server::priv_sentence_type sent){
 	sentence_type result;
-	
 	auto sent_tr = check_and_translate(sent);
 	auto res = check_and_translate_union(sent_tr);
 	
@@ -65,14 +53,13 @@ freeling_server::sentence_type 	freeling_server::analyzer::trunslate(freeling_se
 		w.word = freeling::util::wstring2string(wit->word);
 		w.lemma = freeling::util::wstring2string(wit->lemma);
 		w.tag = freeling::util::wstring2string(wit->tag);
-		
 		result.push_back(w);
 	}
 	return result;
 }
 
+//--------------------------------------------------  analyzer_pool ----
 
-//--------------------------------------------------  analyzer_pool
 freeling_server::analyzer* freeling_server::analyzer_pool::get(const std::string& alang){
 	std::lock_guard<std::mutex> locker(_mutex);
 	analyzer* result = nullptr;
@@ -90,9 +77,6 @@ freeling_server::analyzer* freeling_server::analyzer_pool::get(const std::string
 	return result;
 }
 
-
-
-
 void freeling_server::analyzer_pool::store(analyzer* analyzer){
 	std::lock_guard<std::mutex> locker(_mutex);
 
@@ -100,8 +84,6 @@ void freeling_server::analyzer_pool::store(analyzer* analyzer){
 }
 
 freeling_server::analyzer* freeling_server::analyzer_pool::create_new_analyzer(const std::string& alang){
-	// создать/получить конфигурацию
 	config* cfg = config::create_config(alang);
-
 	return new analyzer(alang, cfg);
 }

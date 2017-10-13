@@ -47,18 +47,14 @@ public:
 	static config* 		create_config(const std::string& lang);
 	static bool 		initialize(const std::string& path);
 	static bool 		is_lang_supported(const std::string& lang);
-	static std::string 	get_root_html(const std::string& lang, const about_type& about);
+	//static std::string 	get_root_html(const std::string& lang, const about_type& about);
 	static about_type 	get_about();
 		
 	freeling::analyzer::config_options& 			get_config_option(){return co;}; 
 	freeling::analyzer::invoke_options& 			get_invoke_option(){return io;}; 
 	
-};
+}; // class config
 
-//std::vector<std::string> 	resplit(const std::string & s, std::string rgx_str = "\\s+");
-std::string 				parse_http_accept_lang(const std::string& str);
-std::wstring 				utf8_to_wchar_t(std::string &str);
-std::string 				create_html(const std::string&lang, const about_type& about);
-};
+}; // namespace freeling_server
 
 #endif

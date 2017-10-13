@@ -14,23 +14,15 @@ namespace freeling_server{
 using namespace s;
 using namespace iod;
 
-
-
 struct priv_word_type{
 	std::wstring word;
 	std::wstring lemma;
 	std::wstring tag;
 };
 
-
 typedef decltype(D(_word = std::string(),
                    _lemma = std::string(),
-                   _tag = std::string())) word_type;
-
-
-
-
-
+                   _tag = std::string()))     word_type;
 
 typedef std::vector<word_type> sentence_type;
 typedef std::vector<priv_word_type> priv_sentence_type;
