@@ -1,11 +1,5 @@
 # FreeLingServer
-Simple http interface for [FreeLing](https://github.com/TALP-UPC/FreeLing) NLP library.
-
-Requirements:
-
-*
-*
-
+Simple http interface for [FreeLing](https://github.com/TALP-UPC/FreeLing) NLP library with JSON data exchange format.
 
 Depends of:
 
@@ -14,15 +8,7 @@ Depends of:
 * [libmicrohttpd](http://www.gnu.org/software/libmicrohttpd/)
 * [boost]()
 
-
-
-
-
-
-
 # FreeLingServer
-
-
 Простой интерфейс информационного взаимодействия с библиотекой обработки текста 
 [FreeLing](https://github.com/TALP-UPC/FreeLing)
 
@@ -43,11 +29,10 @@ Depends of:
 * формат данных - JSON
 * интерфейс пользователя - HTML
 
-
 Существующие зависимости:
 
 * [iod](https://github.com/matt-42/iod)
 * [silicon](https://github.com/matt-42/silicon)
 * [libmicrohttpd](http://www.gnu.org/software/libmicrohttpd/)
-* [boost]()
+* [boost](http://boost.org)
 
