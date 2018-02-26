@@ -1,4 +1,6 @@
 #include <silicon/clients/libcurl_client.hh>
+#include <silicon/api.hh>
+#include <silicon/api_description.hh>
 
 
 #include <main_api.h>
@@ -17,11 +19,24 @@
 TEST_CASE("first test", "[simple-test]"){
 	
 	auto client = libcurl_json_client(hello_api, "127.0.0.1", 8585);
+	std::cout << api_description(hello_api) << std::endl;
+	auto rest = client.http_get();
+		
+	
+	REQUIRE(rest.response.version_major == 0);
+	REQUIRE(rest.response.version_minor == 1);
+	
+	auto name = rest.response.name;
+	
+	REQUIRE(name == std::string("freelingserver"));
+	
+	std::cout << iod::json_encode(rest) << std::endl;
+	
+	
+	
+//	auto rest = client.http_get.freeling(_text = "Мама мыла раму.");
 
-
-	//auto rest = client.http_get.freeling(_text = "Мама мыла раму.");
-
-	//std::cout << iod::json_encode(rest) << std::endl;
+//	std::cout << iod::json_encode(rest) << std::endl;
 
 
 	//auto resp = client.http_get();

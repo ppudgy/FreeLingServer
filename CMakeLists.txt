@@ -33,10 +33,10 @@ set(SOURCE_FILES
 add_executable(freelingserver ${SOURCE_FILES})
 target_link_libraries(freelingserver microhttpd pthread freeling boost_system)
 
-##set(SIMPLE_TEST_FILES test/simple-test.cpp src/main_api.h src/main_symbols.hh)
+set(SIMPLE_TEST_FILES test/simple-test.cpp src/main_api.h src/main_symbols.hh)
 
-##add_executable(simple-test test/simple-test.cpp src/main_api.h src/main_symbols.hh)
-##target_link_libraries(simple-test  pthread boost_system curl)
+add_executable(simple-test test/simple-test.cpp src/main_api.h src/main_symbols.hh)
+target_link_libraries(simple-test  pthread boost_system curl)
 
 
 
