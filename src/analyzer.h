@@ -11,21 +11,23 @@
 
 namespace freeling_server{
 
-using namespace s;
-using namespace iod;
+//using namespace s;
+//using namespace iod;
 
-struct priv_word_type{
+struct word_type{
 	std::wstring word;
 	std::wstring lemma;
 	std::wstring tag;
 };
 
+/*
 typedef decltype(D(_word = std::string(),
                    _lemma = std::string(),
                    _tag = std::string()))     word_type;
 
 typedef std::vector<word_type> sentence_type;
-typedef std::vector<priv_word_type> priv_sentence_type;
+* */
+typedef std::vector<word_type> sentence_type;
 //---------------------------------------------------------- analyzer --
 class analyzer{
 public:
@@ -35,7 +37,7 @@ public:
 	std::vector<sentence_type> 	analyze(const std::string& text);
 	bool 						is_lang(const std::string& lang){ return 0 == _lang.compare(lang); }
 private:	
-	sentence_type 	trunslate(priv_sentence_type sent);
+	//sentence_type 	trunslate(priv_sentence_type sent);
 
 	freeling::analyzer*			_anlz;
 	config* 					_cfg;

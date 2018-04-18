@@ -7,7 +7,7 @@
 
 #include "utils.h"
 
-std::wstring freeling_server::join(const std::vector<priv_word_type> & vec, std::wstring delim){
+std::wstring freeling_server::join(const std::vector<word_type> & vec, std::wstring delim){
     std::wstringstream ss;
     auto e = vec.begin();
     ss << e->word;

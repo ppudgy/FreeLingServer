@@ -6,7 +6,7 @@
 
 namespace freeling_server{
 	void init_union_util();
-	priv_sentence_type check_and_translate_union(priv_sentence_type& sent);
+	sentence_type check_and_translate_union(sentence_type& sent);
 }
  
 

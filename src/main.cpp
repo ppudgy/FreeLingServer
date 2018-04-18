@@ -15,7 +15,9 @@
 #include <assert.h>
 #include <iostream>
 
-#include <iod/parse_command_line.hh>
+
+
+#include "main_symbols.hh"
 
 #include "analyzer.h"
 #include "config.h"
@@ -25,7 +27,7 @@
 #include "preposition_utils.h"
 #include "union_utils.h"
 
-
+#include <iod/parse_command_line.hh>
 
 int main(const int argc, const char* argv[])
 {

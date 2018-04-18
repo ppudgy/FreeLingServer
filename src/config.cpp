@@ -4,6 +4,7 @@
 #include <regex>
 #include <locale>
 #include <codecvt>
+#include <stdexcept>
 
 #include <stringhelper.h>
 
@@ -32,7 +33,8 @@ freeling_server::config* freeling_server::config::create_config(const std::strin
 			_lang_config_map[lang] = result;
 		}
 	}else{
-		throw sl::error::bad_request( lang + " is not suported language");
+		//throw sl::error::bad_request( lang + " is not suported language");
+		throw std::invalid_argument( lang + " is not suported language");
 	}
 	return result;
 }

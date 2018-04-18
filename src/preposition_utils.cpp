@@ -73,7 +73,7 @@ std::vector<std::string>  preposition = {
 	"судя по", "супротив", "у", "через", "черезо", "чрез"
 };
 
-typedef freeling_server::priv_word_type priv_word_type;
+typedef freeling_server::word_type word_type;
 class Map : public std::map<std::wstring, Map* >{};
 Map search_tree;
 
@@ -106,12 +106,12 @@ void build_search_tree(){
 	build_search_tree(tPreposition);
 }
 
-freeling_server::priv_sentence_type find_preposition(const freeling_server::priv_sentence_type &words, const Map* s_tree){
-	freeling_server::priv_sentence_type result;
+freeling_server::sentence_type find_preposition(const freeling_server::sentence_type &words, const Map* s_tree){
+	freeling_server::sentence_type result;
 		
 	if(words.size() != 0){
 		auto w = words[0];
-		freeling_server::priv_sentence_type tail(words.begin() + 1, words.end());
+		freeling_server::sentence_type tail(words.begin() + 1, words.end());
 		auto m = s_tree->find(freeling::util::lowercase(w.word));
 
 		if(m != s_tree->end()){
@@ -127,13 +127,13 @@ freeling_server::priv_sentence_type find_preposition(const freeling_server::priv
 }
 
 const std::wstring DELIM = L" ";
-freeling_server::priv_sentence_type replace_complex_preposition(const freeling_server::priv_sentence_type& words){
-	freeling_server::priv_sentence_type result;
+freeling_server::sentence_type replace_complex_preposition(const freeling_server::sentence_type& words){
+	freeling_server::sentence_type result;
 
 	auto words_begin = words.begin();
 	auto words_end = words.end();
 	for(auto it = words_begin; it != words_end; it++){
-		freeling_server::priv_sentence_type tail(it, words_end);
+		freeling_server::sentence_type tail(it, words_end);
 
 		auto new_word = tail[0];
 		auto f = find_preposition(tail, &search_tree);
@@ -151,7 +151,7 @@ freeling_server::priv_sentence_type replace_complex_preposition(const freeling_s
 	return result;
 }
 
-freeling_server::priv_sentence_type freeling_server::check_and_translate(freeling_server::priv_sentence_type& sent){
+freeling_server::sentence_type freeling_server::check_and_translate(freeling_server::sentence_type& sent){
 		return replace_complex_preposition(sent);
 }
 

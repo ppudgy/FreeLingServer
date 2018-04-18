@@ -22,31 +22,32 @@ freeling_server::analyzer::~analyzer(){
 
 std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(const std::string& text){
     std::vector<freeling_server::sentence_type> result;
+    
 	if(!_cfg) throw sl::error::bad_request( _lang + " is not suported language");
 
     std::list<freeling::sentence> sentenses;
     std::wstring lt = freeling::util::string2wstring(text);
     _anlz->analyze(lt, sentenses, true);
-	std::vector<priv_word_type> res;
+	std::vector<word_type> res;
 	for(auto sit = sentenses.begin(); sit != sentenses.end(); sit++){
-		std::vector<priv_word_type> sent;
+		std::vector<word_type> sent;
         for(auto wit = sit->begin(); wit != sit->end(); wit++){
-			priv_word_type w;
+			word_type w;
             w.word = wit->get_form();
             w.lemma = wit->get_lemma();
             w.tag = wit->get_tag();
             sent.push_back(w);
         }
-        auto sentence = trunslate(sent);
-        result.push_back(sentence);
+        //auto sentence = trunslate(sent);
+		auto sent_tr = check_and_translate(sent);
+		auto res = check_and_translate_union(sent_tr);
+        result.push_back(res);
     }
 	return result;
 }
-
+/*
 freeling_server::sentence_type 	freeling_server::analyzer::trunslate(freeling_server::priv_sentence_type sent){
 	sentence_type result;
-	auto sent_tr = check_and_translate(sent);
-	auto res = check_and_translate_union(sent_tr);
 	
 	for(auto wit = res.begin(); wit != res.end(); wit++){
 		word_type w;
@@ -57,7 +58,7 @@ freeling_server::sentence_type 	freeling_server::analyzer::trunslate(freeling_se
 	}
 	return result;
 }
-
+*/
 //--------------------------------------------------  analyzer_pool ----
 
 freeling_server::analyzer* freeling_server::analyzer_pool::get(const std::string& alang){

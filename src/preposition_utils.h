@@ -5,7 +5,7 @@
 
 namespace freeling_server{
 	void init_preposition_util();
-	priv_sentence_type check_and_translate(priv_sentence_type& sent);
+	sentence_type check_and_translate(sentence_type& sent);
 }
 
 #endif

@@ -4,22 +4,33 @@
 #include <string>
 #include <map>
 #include <chrono>
-#include <silicon/error.hh>
+//#include <silicon/error.hh>
 #include <freeling/morfo/analyzer.h>
 
-#include "main_symbols.hh"
+//#include "main_symbols.hh"
 
 namespace freeling_server{
 
-using namespace s;
-using namespace iod;
+//using namespace s;
+//using namespace iod;
 
+/*
 typedef decltype(D(_name = std::string(),
                    _version_major = int(),
                    _version_minor = int(),
                    _uptime = long(),
                    _freeling = std::string()
                    )) about_type;
+                   */
+                   
+struct about_type{
+	std::string name;
+	int version_major;
+    int version_minor;
+    long long uptime;
+    std::string freeling;
+};                   
+                   
 
 class config{
 	config(const std::string& lang): _is_init(false), _lang(lang){};

@@ -43,12 +43,12 @@ void union_build_search_tree(){
 	union_build_search_tree(rUnion);
 }
 
-freeling_server::priv_sentence_type find_union(const freeling_server::priv_sentence_type &words, const Map* s_tree){
-	freeling_server::priv_sentence_type result;
+freeling_server::sentence_type find_union(const freeling_server::sentence_type &words, const Map* s_tree){
+	freeling_server::sentence_type result;
 		
 	if(words.size() != 0){
 		auto w = words[0];
-		freeling_server::priv_sentence_type tail(words.begin() + 1, words.end());
+		freeling_server::sentence_type tail(words.begin() + 1, words.end());
 		auto m = s_tree->find(freeling::util::lowercase(w.word));
 		if(m != s_tree->end()){
 			auto res = find_union(tail, m->second);
@@ -63,13 +63,13 @@ freeling_server::priv_sentence_type find_union(const freeling_server::priv_sente
 }
 
 const std::wstring DELIM = L" ";
-freeling_server::priv_sentence_type replace_complex_union(const freeling_server::priv_sentence_type& words){
-	freeling_server::priv_sentence_type result;
+freeling_server::sentence_type replace_complex_union(const freeling_server::sentence_type& words){
+	freeling_server::sentence_type result;
 
 	auto words_begin = words.begin();
 	auto words_end = words.end();
 	for(auto it = words_begin; it != words_end; it++){
-		freeling_server::priv_sentence_type tail(it, words_end);
+		freeling_server::sentence_type tail(it, words_end);
 		auto new_word = tail[0];
 		auto f = find_union(tail, &union_search_tree);
 		if(f.size() > 1){
@@ -84,7 +84,7 @@ freeling_server::priv_sentence_type replace_complex_union(const freeling_server:
 	return result;
 }
 
-freeling_server::priv_sentence_type freeling_server::check_and_translate_union(freeling_server::priv_sentence_type& sent){
+freeling_server::sentence_type freeling_server::check_and_translate_union(freeling_server::sentence_type& sent){
 		return replace_complex_union(sent);
 }
 

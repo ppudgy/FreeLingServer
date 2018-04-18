@@ -26,17 +26,24 @@ set(SOURCE_FILES
     src/union_utils.h
     src/utils.cpp
     src/utils.h
-  
-    
 )
 
 add_executable(freelingserver ${SOURCE_FILES})
 target_link_libraries(freelingserver microhttpd pthread freeling boost_system)
 
-set(SIMPLE_TEST_FILES test/simple-test.cpp src/main_api.h src/main_symbols.hh)
 
-add_executable(simple-test test/simple-test.cpp src/main_api.h src/main_symbols.hh)
-target_link_libraries(simple-test  pthread boost_system curl)
+add_executable(freelingcrow
+	src/main_crow.cpp
 
-
-
+    src/analyzer.cpp
+    src/analyzer.h
+    src/config.cpp
+    src/config.h
+    src/preposition_utils.cpp
+    src/preposition_utils.h
+    src/union_utils.cpp
+    src/union_utils.h
+    src/utils.cpp
+    src/utils.h
+ )
+target_link_libraries(freelingcrow pthread freeling boost_system )
