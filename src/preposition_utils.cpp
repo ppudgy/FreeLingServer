@@ -151,7 +151,34 @@ freeling_server::sentence_type replace_complex_preposition(const freeling_server
 	return result;
 }
 
+std::map<std::wstring, std::wstring>hack_lemma_tree = 
+{
+	std::pair <std::wstring, std::wstring> (L"телевизоре", L"телевизор"),
+	std::pair <std::wstring, std::wstring> (L"телевизору", L"телевизор"),
+	std::pair <std::wstring, std::wstring> (L"телевизором", L"телевизор"),
+	std::pair <std::wstring, std::wstring> (L"телевизора", L"телевизор")
+	
+};
+
+
+
+void hack_simple_word_lemma(freeling_server::sentence_type& sent){
+	auto words_begin = sent.begin();
+	auto words_end = sent.end();
+	for(auto it = words_begin; it != words_end; it++){
+		auto w = it->word;
+		auto m = hack_lemma_tree.find(freeling::util::lowercase(w));
+		if(m != hack_lemma_tree.end()){
+			it->lemma = m->second;
+		}
+	}	
+}
+
+
 freeling_server::sentence_type freeling_server::check_and_translate(freeling_server::sentence_type& sent){
+		
+		hack_simple_word_lemma(sent);
+		
 		return replace_complex_preposition(sent);
 }
 

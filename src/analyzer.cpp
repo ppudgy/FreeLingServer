@@ -20,6 +20,11 @@ freeling_server::analyzer::~analyzer(){
 	}
 }
 
+
+
+// TODO неправильно определяется лемма для слова "телевизор" - совпадает со словом.
+
+
 std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(const std::string& text){
     std::vector<freeling_server::sentence_type> result;
     
