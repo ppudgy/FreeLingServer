@@ -14,7 +14,7 @@
 char DEFAULT_FREELING_PATH[] = "/usr/local/share/freeling";
 
 std::string freeling_server::config::_freeling_path = "";
-std::map<std::string, freeling_server::config*> freeling_server::config::_lang_config_map;
+std::map<std::string, std::unique<freeling_server::config>> freeling_server::config::_lang_config_map;
 std::map<std::string, bool> freeling_server::config::_lang_suport_map = {{"ru", true}, {"en", true}};
 std::chrono::system_clock::time_point 	freeling_server::config::_start;
 
@@ -23,20 +23,25 @@ bool freeling_server::config::is_lang_supported(const std::string& lang) {
 	return result;
 }
 
-freeling_server::config* freeling_server::config::create_config(const std::string& lang){
-	config* result = nullptr;
+std::unique<freeling_server::config> freeling_server::config::create_config(const std::string& lang){
 	if(is_lang_supported(lang)){
-		result = _lang_config_map[lang];
-		if(result == nullptr){
-			result = new config(lang);
-			result->init();
-			_lang_config_map[lang] = result;
+		if(_lang_config_map.find(lang) == _lang_config_map.end()){
+			auto& [iterator, created] = _lang_config_map.emplace({ lang, make_unique<config>(lang)});
+			if(created)
+				iterator.second.init();
+			return iterator.second;
+		}else{
+			return _lang_config_map[lang];
 		}
-	}else{
-		//throw sl::error::bad_request( lang + " is not suported language");
-		throw std::invalid_argument( lang + " is not suported language");
+		//auto result = _lang_config_map[lang];
+		//if(result == nullptr){
+		//	result = new config(lang);
+		//	result->init();
+		//	_lang_config_map[lang] = result;
+		//}
+		return iterator.second;
 	}
-	return result;
+	throw std::invalid_argument( lang + " is not suported language");
 }
 
 bool freeling_server::config::initialize(const std::string& path){

@@ -20,18 +20,11 @@ struct word_type{
 	std::wstring tag;
 };
 
-/*
-typedef decltype(D(_word = std::string(),
-                   _lemma = std::string(),
-                   _tag = std::string()))     word_type;
-
-typedef std::vector<word_type> sentence_type;
-* */
 typedef std::vector<word_type> sentence_type;
 //---------------------------------------------------------- analyzer --
 class analyzer{
 public:
-	analyzer( const std::string& lang, config* cfg);
+	analyzer( const std::string& lang, std::shared_ptr<config> cfg);
 	~analyzer();
 
 	std::vector<sentence_type> 	analyze(const std::string& text);
@@ -39,9 +32,9 @@ public:
 private:	
 	//sentence_type 	trunslate(priv_sentence_type sent);
 
-	freeling::analyzer*			_anlz;
-	config* 					_cfg;
-	std::string 				_lang;
+	std::unique_ptr<freeling::analyzer>			_anlz;
+	std::shared_ptr<config>						_cfg;
+	std::string 								_lang;
 };
 
 //----------------------------------------------------- analyzer pool --
