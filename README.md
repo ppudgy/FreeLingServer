@@ -3,10 +3,8 @@ Simple http interface for [FreeLing](https://github.com/TALP-UPC/FreeLing) NLP l
 
 Depends of:
 
-* [iod](https://github.com/matt-42/iod)
-* [silicon](https://github.com/matt-42/silicon)
-* [libmicrohttpd](http://www.gnu.org/software/libmicrohttpd/)
-* [boost]()
+* [FreeLing](https://github.com/TALP-UPC/FreeLing)
+* [crow](https://github.com/ipkn/crow)
 
 # FreeLingServer
 Простой интерфейс информационного взаимодействия с библиотекой обработки текста 
@@ -31,8 +29,6 @@ Depends of:
 
 Существующие зависимости:
 
-* [iod](https://github.com/matt-42/iod)
-* [silicon](https://github.com/matt-42/silicon)
-* [libmicrohttpd](http://www.gnu.org/software/libmicrohttpd/)
-* [boost](http://boost.org)
+* [FreeLing](https://github.com/TALP-UPC/FreeLing)
+* [crow](https://github.com/ipkn/crow)
 
