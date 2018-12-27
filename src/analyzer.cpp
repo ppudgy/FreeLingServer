@@ -6,18 +6,15 @@
 
 //-------------------------------------------------------  analyzer ----
 
-freeling_server::analyzer::analyzer( const std::string& lang, config* cfg):_lang(lang), _cfg(cfg){
-	if(_cfg){
-		_anlz = new freeling::analyzer(_cfg->get_config_option());
+freeling_server::analyzer::analyzer( const std::string& lang, std::shared_ptr<config> cfg ):_lang(lang), _cfg(cfg){
+		_anlz =  std::make_unique<freeling::analyzer>(_cfg->get_config_option());
 		_anlz->set_current_invoke_options(_cfg->get_invoke_option());
-	}
 }
 
+
+
+
 freeling_server::analyzer::~analyzer(){
-	if(_cfg){
-		delete _anlz;
-		delete _cfg;
-	}
 }
 
 
@@ -28,7 +25,7 @@ freeling_server::analyzer::~analyzer(){
 std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(const std::string& text){
     std::vector<freeling_server::sentence_type> result;
     
-	if(!_cfg) throw sl::error::bad_request( _lang + " is not suported language");
+//	if(!_cfg) throw sl::error::bad_request( _lang + " is not suported language");
 
     std::list<freeling::sentence> sentenses;
     std::wstring lt = freeling::util::string2wstring(text);
@@ -66,30 +63,26 @@ freeling_server::sentence_type 	freeling_server::analyzer::trunslate(freeling_se
 */
 //--------------------------------------------------  analyzer_pool ----
 
-freeling_server::analyzer* freeling_server::analyzer_pool::get(const std::string& alang){
+std::unique_ptr<freeling_server::analyzer> freeling_server::analyzer_pool::get(const std::string& alang){
 	std::lock_guard<std::mutex> locker(_mutex);
-	analyzer* result = nullptr;
 
 	for(auto it = pool.begin(); it != pool.end(); it++){
-		result = *it;
-		if(result != nullptr && result->is_lang(alang)){
+		if( (*it)->is_lang(alang)){
+			auto result = std::move(*it);
 			it = pool.erase(it);
-			break;
+			return std::move(result);
 		}
 	}
-	if(result == nullptr){
-		result = create_new_analyzer(alang);
-	}
-	return result;
+	return std::move(create_new_analyzer(alang));
 }
 
-void freeling_server::analyzer_pool::store(analyzer* analyzer){
+void freeling_server::analyzer_pool::store(std::unique_ptr<analyzer> analyzer){
 	std::lock_guard<std::mutex> locker(_mutex);
 
-	pool.insert(pool.begin(), analyzer);
+	pool.insert(pool.begin(), std::move(analyzer));
 }
 
-freeling_server::analyzer* freeling_server::analyzer_pool::create_new_analyzer(const std::string& alang){
-	config* cfg = config::create_config(alang);
-	return new analyzer(alang, cfg);
+std::unique_ptr<freeling_server::analyzer> freeling_server::analyzer_pool::create_new_analyzer(const std::string& alang){
+	std::shared_ptr<config> cfg = config::create_config(alang);
+	return std::make_unique<analyzer>(alang, cfg);
 }

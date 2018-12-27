@@ -22,7 +22,7 @@ struct about_type{
                    
 
 class config{
-	config(const std::string& lang): _is_init(false), _lang(lang){};
+
 	config(const config&) = delete;
 	const config& operator=(const config&) = delete;
 	config(const config&&) = delete;	
@@ -42,14 +42,16 @@ class config{
 	static bool 		find_freeling_data(const std::string& path);
 	
 	static std::string 								_freeling_path;
-	static std::map<std::string, std::unique_ptr<config>> 			_lang_config_map;
+	static std::map<std::string, std::shared_ptr<config>> 			_lang_config_map;
 	static std::map<std::string, bool>    			_lang_suport_map;
 	static std::chrono::system_clock::time_point 	_start;
 
 public:
-	static std::unique_ptr<config> 		create_config(const std::string& lang);
-	static bool 						initialize(const std::string& path);
-	static bool 						is_lang_supported(const std::string& lang);
+	config(const std::string& lang): _is_init(false), _lang(lang){};
+
+	static std::shared_ptr<config> 		create_config(const std::string& lang);
+	static bool 						initialize(const std::string path);
+	static bool 						is_lang_supported(const std::string lang);
 	static about_type 					get_about();
 		
 	freeling::analyzer::config_options& 			get_config_option(){return co;}; 

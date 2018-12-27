@@ -2,11 +2,9 @@
  * FreeLing http interface with crow
  
  */
- 
- 
+
  #include <crow.h>
- 
- 
+
 #include "config.h"
 #include "analyzer.h"
 #include "utils.h"
@@ -14,7 +12,6 @@
 #include "preposition_utils.h"
 #include "union_utils.h"
 
- 
  crow::json::wvalue translate(const std::vector<freeling_server::word_type>& from){
 	 std::vector<crow::json::wvalue>res;
 	 for(auto it = from.begin(); it != from.end(); it++){
@@ -30,7 +27,6 @@
 	 return result;
  }
  
- 
  crow::json::wvalue translate(std::vector<freeling_server::sentence_type>& from){
 	 std::vector<crow::json::wvalue>res;
 	 for(auto it = from.begin(); it != from.end(); it++){
@@ -43,7 +39,7 @@
 
  }
   
- int main()
+int main()
 {
 	
 	freeling_server::init_preposition_util();
@@ -62,7 +58,7 @@
  */
 
 
-	std::unique_ptr<freeling_server::analyzer_pool> analyzer_pool = std::make_unique<freeling_server::analyzer_pool>();
+	std::shared_ptr<freeling_server::analyzer_pool> analyzer_pool = std::make_shared<freeling_server::analyzer_pool>();
 
 
 	CROW_ROUTE(app, "/freeling")
@@ -73,16 +69,15 @@
         auto it = req.headers.find("Accept-Language");
         if(it != req.headers.end())
 			ac_lang = it->second;
+        std::string lang = freeling_server::parse_http_accept_lang(ac_lang);
 			
-			
-        //auto text = "Мама мыла раму.";
         CROW_LOG_INFO << "msg from client: " << req.body;
         auto x = crow::json::load(req.body);
-        
         auto text = x["text"].s();
-        
-        std::string lang = freeling_server::parse_http_accept_lang(ac_lang);
-        freeling_server::analyzer_proxy proxy(*analyzer_pool, lang);
+
+
+
+        freeling_server::analyzer_proxy proxy(analyzer_pool, lang);
         // проанализировать строку
 		auto res = proxy->analyze(text);
         auto result = translate(res);
@@ -102,7 +97,7 @@
 			ac_lang = it->second;
         auto text = req.url_params.get("text");
         std::string lang = freeling_server::parse_http_accept_lang(ac_lang);
-        freeling_server::analyzer_proxy proxy(*analyzer_pool, lang);
+        freeling_server::analyzer_proxy proxy(analyzer_pool, lang);
         // проанализировать строку
 		auto res = proxy->analyze(text);
         auto result = translate(res);
@@ -125,6 +120,6 @@
     
     
     app.port(8585)
-        //.multithreaded()
+        .multithreaded()
         .run();    
 }
