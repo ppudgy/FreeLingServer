@@ -28,39 +28,21 @@ bool freeling_server::config::is_lang_supported(const std::string lang) {
 std::shared_ptr<freeling_server::config> freeling_server::config::create_config(const std::string& lang){
 	if(is_lang_supported(lang)){
 		if(_lang_config_map.find(lang) == _lang_config_map.end()){
-			//auto& [iterator, created] = _lang_config_map.emplace({ lang, make_shared<config>(lang)});
-			
 			auto ptr = make_shared<config>(lang);
 			ptr->init();
-			
+		
 			_lang_config_map[lang] = ptr;
-			
-			//auto& res = _lang_config_map.emplace( {lang, ptr});
-			//if(res.second)
-			//{
-			//	auto iterator = res.first;
-			//	(*iterator).init();
-			//}
 			return ptr;
 		}else{
 			return _lang_config_map[lang];
 		}
-		//auto result = _lang_config_map[lang];
-		//if(result == nullptr){
-		//	result = new config(lang);
-		//	result->init();
-		//	_lang_config_map[lang] = result;
-		//}
-		//return iterator.second;
 	}
 	throw std::invalid_argument( lang + " is not suported language");
 }
 
 bool freeling_server::config::initialize(const std::string path){
 	freeling::util::init_locale(L"ru_RU.UTF-8");
-// init start time	
 	_start = std::chrono::system_clock::now();
-// init freeling path	
 	if(path.size() > 0)
 		_freeling_path = path;
 	if(!find_freeling_data(_freeling_path)){

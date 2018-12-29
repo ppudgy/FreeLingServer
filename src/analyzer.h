@@ -11,9 +11,6 @@
 
 namespace freeling_server{
 
-//using namespace s;
-//using namespace iod;
-
 struct word_type{
 	std::wstring word;
 	std::wstring lemma;
