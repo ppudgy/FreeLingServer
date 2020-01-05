@@ -7,18 +7,20 @@
 
 #include "utils.h"
 
-std::wstring freeling_server::join(const std::vector<word_type> & vec, std::wstring delim){
+std::wstring freeling_server::join(const std::vector<word_type> & vec, const std::wstring delim){
     std::wstringstream ss;
-    auto e = vec.begin();
-    ss << e->word;
-    e++;
-    for (; e != vec.end(); ++e) {
-        ss << delim << e->word;
+    if (vec.size() > 0) {
+        auto e = vec.begin();
+        ss << e->word;
+        e++;
+        for (; e != vec.end(); e++) {
+            ss << delim << e->word;
+        }
     }
     return ss.str();
 }
 
-std::vector<std::string> freeling_server::resplit(const std::string &s, std::string rgx_str) {
+std::vector<std::string> freeling_server::resplit(const std::string &s, const std::string rgx_str) {
         std::vector<std::string> elems;
         std::regex rgx(rgx_str);
         std::sregex_token_iterator iter(s.begin(), s.end(), rgx, -1);

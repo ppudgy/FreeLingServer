@@ -27,3 +27,12 @@ add_executable(freelingserver
     src/utils.h
  )
 target_link_libraries(freelingserver pthread freeling boost_system )
+
+
+
+add_executable(utils.test
+    test/utils.test.cpp
+    src/utils.cpp
+    src/utils.h
+    )
+target_link_libraries(utils.test freeling boost_system)

@@ -15,6 +15,26 @@ struct word_type{
 	std::wstring word;
 	std::wstring lemma;
 	std::wstring tag;
+
+	word_type( )
+		:word(),
+		lemma(),
+		tag()
+		{ }
+
+
+	word_type(std::string aword, std::string alemma, std::string atag )
+		:word(freeling::util::string2wstring(aword)),
+		lemma(freeling::util::string2wstring(alemma)),
+		tag(freeling::util::string2wstring(atag))
+		{ }
+
+	word_type(std::wstring aword, std::wstring alemma, std::wstring atag )
+		:word(aword),
+		lemma(alemma),
+		tag(atag)
+		{ }
+
 };
 
 typedef std::vector<word_type> sentence_type;
