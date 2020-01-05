@@ -89,5 +89,23 @@ TEST_CASE("parse lang", "[utils]") {
 	//REQUIRE(res.at(1).compare("test") == 0);
 }
 
+TEST_CASE("parse empty lang string" , "[utils]") {
+	std::string accept_string = "";
+
+	auto res = freeling_server::parse_http_accept_lang(accept_string);
+
+	REQUIRE(res.size() == 0);
+	//REQUIRE(res.compare("") == 0);
+	//REQUIRE(res.at(1).compare("test") == 0);
+}
 
 
+TEST_CASE("parse ru  lang string", "[utils]") {
+	std::string accept_string = "ru";
+
+	auto res = freeling_server::parse_http_accept_lang(accept_string);
+
+	REQUIRE(res.size() > 0);
+	REQUIRE(res.compare("ru") == 0);
+	//REQUIRE(res.at(1).compare("test") == 0);
+}
