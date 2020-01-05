@@ -45,6 +45,7 @@
 *.suo
 Debug
 Release
+build
 *.user
 *.xcuserstate
 .DS_Store

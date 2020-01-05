@@ -1,4 +1,3 @@
-#include <silicon/error.hh>
 
 #include "analyzer.h"
 #include "preposition_utils.h"

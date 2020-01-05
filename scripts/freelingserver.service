@@ -1,0 +1,10 @@
+[Unit]
+Description=FreeLing morfo analyzer
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/freelingserver
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

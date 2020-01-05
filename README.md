@@ -10,7 +10,7 @@ Depends of:
 Простой интерфейс информационного взаимодействия с библиотекой обработки текста 
 [FreeLing](https://github.com/TALP-UPC/FreeLing)
 
-Требования:
+## Требования:
 
 * наличие пользовательского графического и машинного интерфейсов взаимодействия;
 * возможность прозрачного удаленного сетевого взаимодействия;
@@ -21,7 +21,7 @@ Depends of:
 * отсутствие состояния;
 * минимальная зависимость от сторонних библиотек;
 
-Применяемые решения: 
+## Применяемые решения: 
 
 * транспортный протокол - HTTP
 * формат данных - JSON
@@ -32,3 +32,18 @@ Depends of:
 * [FreeLing](https://github.com/TALP-UPC/FreeLing)
 * [crow](https://github.com/ipkn/crow)
 
+
+## Сборка
+
+	mkdir build
+	cd build
+	cmake ..
+	make
+
+## Установка
+	
+	cp freelingserver /usr/local/bin
+	cp ../scripts/freelingserver.service /etc/systemd/system
+	systemctl daemon-reload
+	systemctl enable freelingserver.service
+	systemctl start freelingserver.service
