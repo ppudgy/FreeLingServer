@@ -1,7 +1,8 @@
 
 #include "analyzer.h"
-#include "preposition_utils.h"
-#include "union_utils.h"
+//#include "preposition_utils.h"
+//#include "union_utils.h"
+#include "sequence_processor.h"
 
 //-------------------------------------------------------  analyzer ----
 
@@ -23,14 +24,21 @@ std::vector<freeling_server::sentence_type>  freeling_server::analyzer::analyze(
 	for(auto sit = sentenses.begin(); sit != sentenses.end(); sit++){
 		std::vector<word_type> sent;
         for(auto wit = sit->begin(); wit != sit->end(); wit++){
-			word_type w;
-            w.word = wit->get_form();
-            w.lemma = wit->get_lemma();
-            w.tag = wit->get_tag();
-            sent.push_back(w);
+			//word_type w;
+            //w.word = wit->get_form();
+            //w.lemma = wit->get_lemma();
+            //w.tag = wit->get_tag();
+            //sent.push_back(w);
+            sent.emplace_back(wit->get_form(), wit->get_lemma(), wit->get_tag());
         }
-		auto sent_tr = check_and_translate(sent);
-		auto res = check_and_translate_union(sent_tr);
+        if(_lang.compare("ru") == 0){
+        	ru_processor* processor = ru_processor::instance();
+        	res = processor->process(sent);
+        } else {
+        	res.insert(res.end(), sent.begin(), sent.end());
+        }
+		//auto sent_tr = check_and_translate(sent);
+		//auto res = check_and_translate_union(sent_tr);
         result.push_back(res);
     }
 	return result;

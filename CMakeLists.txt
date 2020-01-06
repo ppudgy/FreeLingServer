@@ -19,10 +19,8 @@ add_executable(freelingserver
     src/analyzer.h
     src/config.cpp
     src/config.h
-    src/preposition_utils.cpp
-    src/preposition_utils.h
-    src/union_utils.cpp
-    src/union_utils.h
+    src/sequence_processor.cpp
+    src/sequence_processor.h
     src/utils.cpp
     src/utils.h
  )
@@ -36,3 +34,13 @@ add_executable(utils.test
     src/utils.h
     )
 target_link_libraries(utils.test freeling boost_system)
+
+
+add_executable(sp.test
+    test/sp.test.cpp
+    src/sequence_processor.h
+    src/sequence_processor.cpp
+    src/utils.cpp
+    src/utils.h
+    )
+target_link_libraries(sp.test freeling boost_system)

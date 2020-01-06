@@ -9,8 +9,8 @@
 #include "analyzer.h"
 #include "utils.h"
  
-#include "preposition_utils.h"
-#include "union_utils.h"
+//#include "preposition_utils.h"
+//#include "union_utils.h"
 
  crow::json::wvalue translate(const std::vector<freeling_server::word_type>& from){
 	 std::vector<crow::json::wvalue>res;
@@ -42,8 +42,8 @@
 int main()
 {
 	
-	freeling_server::init_preposition_util();
-	freeling_server::init_union_util();
+	//freeling_server::init_preposition_util();
+	//freeling_server::init_union_util();
 	
 	std::string freeling_path = "/usr/local/share/freeling";
 	if(!freeling_server::config::initialize(freeling_path))

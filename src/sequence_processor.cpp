@@ -1,13 +1,101 @@
-#include <string>
-#include <map>
-#include <sstream>
-#include <regex>
-
-#include <iostream>
-
+#include "sequence_processor.h"
 #include "utils.h"
 
-#include "preposition_utils.h"
+
+
+class Map : public std::map<std::wstring, Map* >{};
+
+class sequence_processor_impl: public freeling_server::sequence_processor {
+	public:
+		sequence_processor_impl(const std::vector<std::string> &templates, const std::string atag);
+		freeling_server::sentence_type process(const freeling_server::sentence_type& sent) const ;
+
+	private:
+		freeling_server::sentence_type find_union(const freeling_server::sentence_type &words, const Map* s_tree) const;
+		void build_search_tree(const std::vector<std::string> &qwe);
+		Map search_tree;
+		std::wstring tag;
+};
+
+void sequence_processor_impl::build_search_tree(const std::vector<std::string> &qwe){
+	//for(auto it = qwe.begin(); it != qwe.end(); it++){
+	for(auto s : qwe){
+		//std::string temp = *it;
+		auto words = freeling_server::resplit(s);
+		if(words.size() == 1) continue;
+		Map* _search_tree = & search_tree;
+		for(auto ot = words.begin(); ot != words.end(); ot++){
+			std::wstring key = freeling::util::string2wstring(*ot);
+			if(_search_tree->count(key) != 0){
+				auto l_search_tree = _search_tree->find(key);
+				_search_tree = (l_search_tree != _search_tree->end() ? l_search_tree->second :  new Map());
+			}else{
+				Map* l_search_tree = new Map();
+				_search_tree->emplace(key, l_search_tree); 
+				_search_tree = l_search_tree;
+			}
+		}
+	}
+}
+
+
+sequence_processor_impl::sequence_processor_impl(const std::vector<std::string> &templates, const std::string atag): search_tree(), tag(freeling::util::string2wstring(atag)) {
+	build_search_tree(templates);
+}
+
+
+freeling_server::sentence_type sequence_processor_impl::find_union(const freeling_server::sentence_type &words, const Map* s_tree) const {
+	freeling_server::sentence_type result;
+		
+	if(words.size() != 0){
+		auto w = words[0];
+		freeling_server::sentence_type tail(words.begin() + 1, words.end());
+		auto m = s_tree->find(freeling::util::lowercase(w.word));
+		if(m != s_tree->end()){
+			auto res = find_union(tail, m->second);
+			result.insert(result.end(), w);
+			if(res.size() > 0){
+				for(auto it = res.begin(); it != res.end(); it++)
+					result.insert(result.end(),*it);
+			}
+		}
+	}
+	return result;
+}
+
+const std::wstring DELIM = L" ";
+freeling_server::sentence_type sequence_processor_impl::process(const freeling_server::sentence_type& sent) const {
+	freeling_server::sentence_type result;
+
+	auto words_begin = sent.begin();
+	auto words_end = sent.end();
+	for(auto it = words_begin; it != words_end; it++){
+		freeling_server::sentence_type tail(it, words_end);
+		auto new_word = tail[0];
+		auto f = find_union(tail, &search_tree);
+		if(f.size() > 1){
+			std::wstring w = join(f, DELIM);
+			new_word.word = w;
+			new_word.lemma = w;
+			new_word.tag = tag;
+			it += f.size()-1;
+		}
+		result.push_back(new_word);	
+	}
+	return result;
+}
+
+// союзы
+const std::vector<std::string> rUnion = {
+        "так как", "как будто", "так что", "для того чтобы", "тогда как", "то есть", "потому что", "оттого что",
+        "не только", "так и", "но и", "не только", "столько и", "то ли", "не то", "однако же", "все же", "не столько",
+        "не то чтобы", "да и", "а именно", "до такой степени", "до того", "как будто", "потому что", "если бы",
+        "несмотря на то", "с тем чтобы", "так что"
+    };
+
+std::unique_ptr<freeling_server::sequence_processor> freeling_server::build_union_processor() {
+	return std::make_unique<sequence_processor_impl>(rUnion, "C0");
+}
 
 // предлоги родительского падежа
 std::vector<std::string> rPreposition = {
@@ -73,115 +161,33 @@ std::vector<std::string>  preposition = {
 	"судя по", "супротив", "у", "через", "черезо", "чрез"
 };
 
-typedef freeling_server::word_type word_type;
-class Map : public std::map<std::wstring, Map* >{};
-Map search_tree;
 
-void build_search_tree(const std::vector<std::string> &qwe){
-	for(auto it = qwe.begin(); it != qwe.end(); it++){
-		std::string temp = *it;
-		auto words = freeling_server::resplit(temp);
-		Map* _search_tree = & search_tree;
-		if(words.size() == 1) continue;
-		for(auto ot = words.begin(); ot != words.end(); ot++){
-			std::wstring key = freeling::util::string2wstring(*ot);
-			if(_search_tree->count(key) != 0){
-				auto l_search_tree = _search_tree->find(key);
-				_search_tree = (l_search_tree != _search_tree->end() ? l_search_tree->second :  new Map());
-			}else{
-				Map* l_search_tree = new Map();
-				_search_tree->emplace(key, l_search_tree); 
-				_search_tree = l_search_tree;
-			}
-		}
+std::unique_ptr<freeling_server::sequence_processor> freeling_server::build_preposition_processor() {
+	std::vector<std::string> data;
+	data.insert(data.end(), rPreposition.begin(), rPreposition.end());
+	data.insert(data.end(), dPreposition.begin(), dPreposition.end());
+	data.insert(data.end(), vPreposition.begin(), vPreposition.end());
+	data.insert(data.end(), pPreposition.begin(), pPreposition.end());
+	data.insert(data.end(), tPreposition.begin(), tPreposition.end());
+	data.insert(data.end(),  preposition.begin(),  preposition.end());
+
+	return std::make_unique<sequence_processor_impl>(data, "B0");
+}
+
+
+freeling_server::ru_processor* freeling_server::ru_processor::inst = nullptr;
+
+// TODO add lock
+freeling_server::ru_processor* freeling_server::ru_processor::instance() {
+	if (inst == nullptr) {
+		inst = new ru_processor();
 	}
+	return inst;
 }
 
-void build_search_tree(){
-	build_search_tree(preposition);
-	build_search_tree(rPreposition);
-	build_search_tree(dPreposition);
-	build_search_tree(vPreposition);
-	build_search_tree(pPreposition);
-	build_search_tree(tPreposition);
-}
-
-freeling_server::sentence_type find_preposition(const freeling_server::sentence_type &words, const Map* s_tree){
-	freeling_server::sentence_type result;
-		
-	if(words.size() != 0){
-		auto w = words[0];
-		freeling_server::sentence_type tail(words.begin() + 1, words.end());
-		auto m = s_tree->find(freeling::util::lowercase(w.word));
-
-		if(m != s_tree->end()){
-			auto res = find_preposition(tail, m->second);
-			result.insert(result.end(), w);
-			if(res.size() > 0){
-				for(auto it = res.begin(); it != res.end(); it++)
-					result.insert(result.end(),*it);
-			}
-		}
-	}
-	return result;
-}
-
-const std::wstring DELIM = L" ";
-freeling_server::sentence_type replace_complex_preposition(const freeling_server::sentence_type& words){
-	freeling_server::sentence_type result;
-
-	auto words_begin = words.begin();
-	auto words_end = words.end();
-	for(auto it = words_begin; it != words_end; it++){
-		freeling_server::sentence_type tail(it, words_end);
-
-		auto new_word = tail[0];
-		auto f = find_preposition(tail, &search_tree);
-		if(f.size() > 1){
-			
-			std::wstring w = freeling_server::join(f, DELIM);
-			new_word.word = w;
-			new_word.lemma = w;
-			new_word.tag = L"B0";
-			it += f.size()-1;
-		}
-		result.push_back(new_word);	
-	}
-
-	return result;
-}
-
-std::map<std::wstring, std::wstring>hack_lemma_tree = 
-{
-	std::pair <std::wstring, std::wstring> (L"телевизоре", L"телевизор"),
-	std::pair <std::wstring, std::wstring> (L"телевизору", L"телевизор"),
-	std::pair <std::wstring, std::wstring> (L"телевизором", L"телевизор"),
-	std::pair <std::wstring, std::wstring> (L"телевизора", L"телевизор")
+freeling_server::sentence_type freeling_server::ru_processor::process(const sentence_type& sent) const {
 	
-};
-
-
-
-void hack_simple_word_lemma(freeling_server::sentence_type& sent){
-	auto words_begin = sent.begin();
-	auto words_end = sent.end();
-	for(auto it = words_begin; it != words_end; it++){
-		auto w = it->word;
-		auto m = hack_lemma_tree.find(freeling::util::lowercase(w));
-		if(m != hack_lemma_tree.end()){
-			it->lemma = m->second;
-		}
-	}	
-}
-
-
-freeling_server::sentence_type freeling_server::check_and_translate(freeling_server::sentence_type& sent){
-		
-		hack_simple_word_lemma(sent);
-		
-		return replace_complex_preposition(sent);
-}
-
-void freeling_server::init_preposition_util(){
-	build_search_tree();
+	freeling_server::sentence_type res1 = union_processor->process(sent);
+	freeling_server::sentence_type result = preposition_processor->process(res1);
+	return std::move(result);
 }
