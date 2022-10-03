@@ -36,8 +36,8 @@ class config{
 
 	bool 				_is_init;
 	std::string 		_lang;
-	freeling::analyzer_config::config_options 				co;
-	freeling::analyzer_config::invoke_options 				io;
+	freeling::analyzer_config_options 				co;
+	freeling::analyzer_invoke_options 				io;
 	
 	static bool 		find_freeling_data(const std::string& path);
 	
@@ -54,8 +54,8 @@ public:
 	static bool 						is_lang_supported(const std::string lang);
 	static about_type 					get_about();
 		
-	freeling::analyzer_config::config_options& 			get_config_option(){return co;}; 
-	freeling::analyzer_config::invoke_options& 			get_invoke_option(){return io;}; 
+	freeling::analyzer_config_options& 			get_config_option(){return co;}; 
+	freeling::analyzer_invoke_options& 			get_invoke_option(){return io;}; 
 	
 }; // class config
 

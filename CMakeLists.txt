@@ -13,8 +13,7 @@ include_directories(src)
 
 
 add_executable(freelingserver
-	src/main.cpp
-
+    src/main.cpp
     src/analyzer.cpp
     src/analyzer.h
     src/config.cpp
@@ -24,7 +23,7 @@ add_executable(freelingserver
     src/utils.cpp
     src/utils.h
  )
-target_link_libraries(freelingserver pthread freeling boost_system )
+target_link_libraries(freelingserver pthread freeling boost_system)
 
 
 

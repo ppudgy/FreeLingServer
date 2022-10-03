@@ -111,7 +111,7 @@ void freeling_server::config::fill_config_option(const std::wstring &path, const
   co.TAGGER_HMMFile = lpath + L"tagger.dat";
   
   
-  co.TAGGER_ForceSelect=  freeling::RETOK;
+  io.TAGGER_ForceSelect=  freeling::RETOK;
   /// Chart parser config file
 	//  co.PARSER_GrammarFile = lpath + L"chunker/grammar-chunk.dat";
   /// Dependency parsers config files
@@ -141,7 +141,9 @@ void freeling_server::config::fill_invoke_option() {
   io.MACO_CompoundAnalysis = false;
   io.MACO_NERecognition = false;
   io.MACO_RetokContractions = false;
-  
+
+  io.TAGGER_ForceSelect=  freeling::RETOK;
+
   io.NEC_NEClassification = false;
   io.PHON_Phonetics = false;
   
